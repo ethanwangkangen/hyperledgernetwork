@@ -4,8 +4,8 @@
 #!/bin/bash
 
 # Set PATH to include the local bin directory
-export PATH=${PWD}/bin:$PATH
-export FABRIC_CFG_PATH=$PWD/config/
+export PATH=${PWD}/bin:$PATH # where are binaries located. contain tools like cryptogen..
+export FABRIC_CFG_PATH=$PWD # where configtx.yaml file is located.
 
 
 # Function to start the network
