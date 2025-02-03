@@ -2,8 +2,8 @@
 ./network.sh createChannel #to create the channe
 #?? to join nodes to channel
 
-export PATH=${PWD}/bin:$PATH
-export FABRIC_CFG_PATH=$PWD/config/
+export PATH=${PWD}/bin:$PATH # where binaries are stored
+export FABRIC_CFG_PATH=$PWD/config/ # where configtx.yaml is stored
 
 # to add binaries to path
 

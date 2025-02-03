@@ -4,6 +4,12 @@ networks:
   fabric-network:
     driver: bridge
 
+volumes:
+  peer0.org1.example.com:
+  peer1.org1.example.com:
+  peer0.org2.example.com:
+  peer1.org2.example.com:
+
 services:
 
   # Orderer Nodes
@@ -12,7 +18,7 @@ services:
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_LISTENPORT=7047
+      - ORDERER_GENERAL_LISTENPORT=7047 # use this port when joining peer to channel. inside joinchannel.sh
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
@@ -191,6 +197,8 @@ services:
   peer0.org1.example.com:
     image: hyperledger/fabric-peer:2.5
     environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true #trying this....
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:11051  # Updated port for Peer0
       - CORE_PEER_LISTENADDRESS=0.0.0.0:11051  # Updated
@@ -201,7 +209,10 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:11051  # Updated
       - CORE_PEER_LOCALMSPID=Org1MSP
     volumes:
-      - ./peer0.org1.example.com:/etc/hyperledger
+      #- ./peer0.org1.example.com:/etc/hyperledger
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
+      - peer0.org1.example.com:/var/hyperledger/production
+    working_dir: /root
     networks:
       - fabric-network
     ports:
@@ -210,6 +221,8 @@ services:
   peer1.org1.example.com:
     image: hyperledger/fabric-peer:2.5
     environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_ID=peer1.org1.example.com
       - CORE_PEER_ADDRESS=peer1.org1.example.com:11054  # Updated port for Peer0
       - CORE_PEER_LISTENADDRESS=0.0.0.0:11054  # Updated
@@ -220,7 +233,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:11054  # Updated
       - CORE_PEER_LOCALMSPID=Org2MSP
     volumes:
-      - ./peer1.org1.example.com:/etc/hyperledger
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
+      - peer1.org1.example.com:/var/hyperledger/production
     networks:
       - fabric-network
     ports:
@@ -230,6 +244,7 @@ services:
   peer0.org2.example.com:
     image: hyperledger/fabric-peer:2.5
     environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:13051  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13051  # Updated
@@ -240,7 +255,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:13051  # Updated
       - CORE_PEER_LOCALMSPID=Org2MSP
     volumes:
-      - ./peer0.org2.example.com:/etc/hyperledger
+      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
+      - peer0.org2.example.com:/var/hyperledger/production
     networks:
       - fabric-network
     ports:
@@ -249,6 +265,7 @@ services:
   peer1.org2.example.com:
     image: hyperledger/fabric-peer:2.5
     environment:
+      - FABRIC_CFG=/etc/hyperledger/fabric/
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:13054  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13054  # Updated
@@ -259,10 +276,12 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:13054  # Updated
       - CORE_PEER_LOCALMSPID=Org2MSP
     volumes:
-      - ./peer1.org2.example.com:/etc/hyperledger
+      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
+      - peer1.org2.example.com:/var/hyperledger/production
     networks:
       - fabric-network
     ports:
       - "13054:13054"  # Updated host port
+
 
 
