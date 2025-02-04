@@ -40,6 +40,7 @@ PeerOrgs:
       Count: 2
       SANS:
         - 127.0.0.1
+        - localhost
     Users:
       Count: 1
 
@@ -50,6 +51,7 @@ PeerOrgs:
       Count: 2
       SANS:
         - 127.0.0.1
+        - localhost
     Users:
       Count: 1
 

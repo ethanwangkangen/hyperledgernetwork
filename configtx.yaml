@@ -3,7 +3,7 @@ Organizations:
   - &OrdererOrg
     Name: OrdererMSP
     ID: OrdererMSP
-    MSPDir: crypto-config/ordererOrganizations/example.com/msp
+    MSPDir: ./crypto-config/ordererOrganizations/example.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -17,14 +17,14 @@ Organizations:
   - &Org1
     Name: Org1MSP
     ID: Org1MSP
-    MSPDir: crypto-config/peerOrganizations/org1.example.com/msp
+    MSPDir: ./crypto-config/peerOrganizations/org1.example.com/msp
     Policies:
       Readers:
         Type: Signature
         Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
       Writers:
         Type: Signature
-        Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
       Admins:
         Type: Signature
         Rule: "OR('Org1MSP.admin')"
@@ -38,7 +38,7 @@ Organizations:
   - &Org2
     Name: Org2MSP
     ID: Org2MSP
-    MSPDir: crypto-config/peerOrganizations/org2.example.com/msp
+    MSPDir: ./crypto-config/peerOrganizations/org2.example.com/msp
     Policies:
       Readers:
         Type: Signature
@@ -94,9 +94,8 @@ Application: &ApplicationDefaults
   # Organizations is the list of orgs which are defined as participants on
   # the application side of the network
   Organizations:
-  # Policies defines the set of policies at this level of the config tree
-  # For Application policies, their canonical path is
-  #   /Channel/Application/<PolicyName>
+    - *Org1
+    - *Org2
   Policies:
     Readers:
       Type: ImplicitMeta
@@ -106,7 +105,7 @@ Application: &ApplicationDefaults
       Rule: "ANY Writers"
     Admins:
       Type: ImplicitMeta
-      Rule: "MAJORITY Admins"
+      Rule: "ANY Admins"
     LifecycleEndorsement:
       Type: ImplicitMeta
       Rule: "MAJORITY Endorsement"
@@ -114,14 +113,16 @@ Application: &ApplicationDefaults
       Type: ImplicitMeta
       Rule: "MAJORITY Endorsement"
 
+
+
 Orderer: &OrdererDefaults
   OrdererType: etcdraft
   Addresses:
-    - orderer.example.com:7047
-    - orderer2.example.com:7052
-    - orderer3.example.com:7057
-    - orderer4.example.com:7062
-    - orderer5.example.com:7067
+    - orderer.example.com:7049
+    - orderer2.example.com:7054
+    - orderer3.example.com:7059
+    - orderer4.example.com:7064
+    - orderer5.example.com:7069
   BatchTimeout: 2s # Amount of time to wait before creating a batch
   BatchSize: 
     MaxMessageCount: 10 # Max number of messages to permit in a batch
@@ -131,23 +132,23 @@ Orderer: &OrdererDefaults
   EtcdRaft:
     Consenters:
       - Host: orderer.example.com
-        Port: 7047 #ORDERERGENERALLISTENERPORT
+        Port: 7049 #ORDERERGENERALLISTENERPORT
         ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
       - Host: orderer2.example.com
-        Port: 7052
+        Port: 7054
         ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
       - Host: orderer3.example.com
-        Port: 7057
+        Port: 7059
         ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
       - Host: orderer4.example.com
-        Port: 7062
+        Port: 7064
         ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
       - Host: orderer5.example.com
-        Port: 7067
+        Port: 7069
         ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
         ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
   Policies:
@@ -195,23 +196,23 @@ Profiles:
       EtcdRaft:
         Consenters:
           - Host: orderer.example.com
-            Port: 7047
+            Port: 7049
             ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
             ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
           - Host: orderer2.example.com
-            Port: 7052
+            Port: 7054
             ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
             ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/server.crt
           - Host: orderer3.example.com
-            Port: 7057
+            Port: 7059
             ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
             ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls/server.crt
           - Host: orderer4.example.com
-            Port: 7062
+            Port: 7064
             ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
             ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls/server.crt
           - Host: orderer5.example.com
-            Port: 7067
+            Port: 7069
             ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
             ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls/server.crt
       Organizations:

@@ -13,9 +13,9 @@ function startNetwork() {
     echo "Starting the network..."
 
     # generate artifacts if they don't exist
-    if [ ! -d "organizations/peerOrganizations" ]; then
+#    if [ ! -d "organizations/peerOrganizations" ]; then
         generateCrypto
-    fi
+#    fi
 
     docker-compose -f docker-compose.yaml up -d
 
@@ -54,8 +54,11 @@ function generateCrypto() {
 # Function to create genesis block/create application channel
 function generateGenesis() {
     echo "Generating genesis block for channel..."
-    configtxgen -profile ChannelUsingRaft -outputBlock ./channel-artifacts/genesis.block -channelID myblock
-    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel
+	rm -rf channel-artifacts
+	mkdir channel-artifacts
+#	configtxgen -profile ChannelUsingRaft -outputBlock ./system-genesis-block/genesis.block -channelID mychannel
+    configtxgen -profile ChannelUsingRaft -outputBlock ./channel-artifacts/genesis.block -channelID system-channel # Genesis block
+    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
 
 }
 
@@ -68,6 +71,11 @@ if [ "$1" == "up" ]; then
     startNetwork
 elif [ "$1" == "down" ]; then
     stopNetwork
+elif [ "$1" == "x" ]; then
+	stopNetwork
+	startNetwork
+	generateGenesis
+	docker ps
 else
     echo "Usage: $0 {up|down}"
     exit 1
