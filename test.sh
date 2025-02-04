@@ -17,6 +17,8 @@ export CORE_PEER_LOGGING=DEBUG
 export FABRIC_LOGGING=debug
 
 # Create the channel by passing the transaction file
+ls $CORE_PEER_MSPCONFIGPATH/admincerts
+
 peer channel list
 peer channel create -o localhost:7049  --ordererTLSHostnameOverride orderer.example.com -c mychannel -f ./channel-artifacts/mychannel.tx --outputBlock ./channel-artifacts/mychannel.block --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" 
 #peer channel create -o localhost:7050 -c mychannel -f ./channel-artifacts/mychannel.tx --outputBlock ./channel-artifacts/mychannel.block --insecure

@@ -14,11 +14,20 @@ function startNetwork() {
 
     # generate artifacts if they don't exist
 #    if [ ! -d "organizations/peerOrganizations" ]; then
-        generateCrypto
-#    fi
+    generateCrypto
 
+    cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/* crypto-config/peerOrganizations/org1.example.com/msp/admincerts/
+    cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/* crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/admincerts/
+
+    cp core.yaml crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com
+    cp core.yaml crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com
+    cp core.yaml crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com
+    cp core.yaml crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com
+
+    generateGenesis
     docker-compose -f docker-compose.yaml up -d
 
+    generateChannel
     echo "Network started."
 }
 
@@ -41,6 +50,9 @@ function stopNetwork() {
     # Ensure that all unused images are removed
     docker rmi -f $(docker images -q)
     echo "Network stopped and cleaned up."
+
+    rm -rf crypto-config
+    rm -rf channel-artifacts
 }
 
 
@@ -58,8 +70,11 @@ function generateGenesis() {
 	mkdir channel-artifacts
 #	configtxgen -profile ChannelUsingRaft -outputBlock ./system-genesis-block/genesis.block -channelID mychannel
     configtxgen -profile ChannelUsingRaft -outputBlock ./channel-artifacts/genesis.block -channelID system-channel # Genesis block
-    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
+#    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
 
+}
+function generateChannel() {
+    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
 }
 
 
@@ -74,7 +89,7 @@ elif [ "$1" == "down" ]; then
 elif [ "$1" == "x" ]; then
 	stopNetwork
 	startNetwork
-	generateGenesis
+	
 	docker ps
 else
     echo "Usage: $0 {up|down}"
