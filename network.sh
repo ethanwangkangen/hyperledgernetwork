@@ -19,6 +19,9 @@ function startNetwork() {
     cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/* crypto-config/peerOrganizations/org1.example.com/msp/admincerts/
     cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/* crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/admincerts/
 
+	cp crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/* crypto-config/peerOrganizations/org2.example.com/msp/admincerts/
+    cp crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/* crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/admincerts
+
     cp core.yaml crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com
     cp core.yaml crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com
     cp core.yaml crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com

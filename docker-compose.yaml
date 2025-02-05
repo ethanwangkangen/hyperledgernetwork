@@ -77,7 +77,7 @@ services:
 #      - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore:/var/hyperledger/orderer/msp/keystore
       # Mapping the CA root certificate to the orderer's MSP
       - ./crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem:/var/hyperledger/orderer/msp/cacerts/ca.org1.example.com-cert.pem
-
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/ca.org2.example.com-cert.pem:/var/hyperledger/orderer/msp/cacerts/ca.org2.example.com-cert.pem
       
 
       - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
@@ -302,7 +302,7 @@ services:
       - CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.example.com:11054  # Updated
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:11054  # Updated
-      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_LOCALMSPID=Org1MSP
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
       - peer1.org1.example.com:/var/hyperledger/production
@@ -316,6 +316,7 @@ services:
     image: hyperledger/fabric-peer:2.5
     environment:
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:13051  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13051  # Updated
@@ -337,6 +338,7 @@ services:
     image: hyperledger/fabric-peer:2.5
     environment:
       - FABRIC_CFG=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:13054  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13054  # Updated
