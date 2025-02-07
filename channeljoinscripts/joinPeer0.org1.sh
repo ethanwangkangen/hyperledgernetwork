@@ -23,7 +23,7 @@ fi
 
 MAX_RETRIES=5  # Number of times to retry
 RETRY_DELAY=5  # Delay in seconds between retries
-BLOCK_PATH="./channel-artifacts/mychannel.block"
+
 
 for ((i=1; i<=MAX_RETRIES; i++)); do
     echo "Attempt $i: Joining channel..."#
