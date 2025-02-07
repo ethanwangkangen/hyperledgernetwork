@@ -31,6 +31,10 @@ function startNetwork() {
     docker-compose -f docker-compose.yaml up -d
 
     generateChannel
+
+	cd chaincode
+	gradle build
+
     echo "Network started."
 }
 
@@ -56,6 +60,8 @@ function stopNetwork() {
 
     rm -rf crypto-config
     rm -rf channel-artifacts
+
+	rm -rf chaincode/build
 }
 
 

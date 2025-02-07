@@ -51,7 +51,7 @@ peer lifecycle chaincode package mychaincode.tar.gz \
 	--lang java \
 	--label mychaincode_v1
 
-# Instasll the chaincode on this peer
+# Install the chaincode on this peer
 peer lifecycle chaincode install mychaincode.tar.gz
 
 exit 1
