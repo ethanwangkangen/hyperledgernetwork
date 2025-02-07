@@ -54,4 +54,8 @@ peer lifecycle chaincode package mychaincode.tar.gz \
 # Install the chaincode on this peer
 peer lifecycle chaincode install mychaincode.tar.gz
 
+# Instantiate the chaincode (ie. install it on the channel)
+peer chaincode instantiate -o localhost:7049 --channelID mychannel --ordererTLSHostnameOverride orderer.example.com --name mychaincode --version 1.0 --init-required -c '{"Args":["init","a","100","b","200"]}' --ctor '{"Args":["init","a","100","b","200"]}' --tls --cafile --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+
+
 exit 1
