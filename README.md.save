@@ -15,3 +15,12 @@ export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.e
 export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
 export CORE_PEER_ADDRESS=localhost:7051
 # then 
+
+
+#How to install chaincode
+- MyChaincode.java inside chaincode/...../
+- then ./gradlew build
+- jar file should be inside build/libs
+- then use a peer to package chaincode. peer lifecycle chaincode package mychaincode.tar.gz... (inside joinchannelscript)
+- this creates the tar.gz file
+- then install the chaincode with peer install ...

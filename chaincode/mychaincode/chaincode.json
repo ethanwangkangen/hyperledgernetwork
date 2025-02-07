@@ -1,0 +1,5 @@
+{
+  "path": "chaincode.jar",
+  "type": "java",
+  "label": "mychaincode_v1"
+}

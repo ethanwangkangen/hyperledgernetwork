@@ -45,5 +45,13 @@ peer channel getinfo -c mychannel
 #configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
 #jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
 
+# Package the chaincode into mychaincode.tar.gz, will be inside this directory
+peer lifecycle chaincode package mychaincode.tar.gz \
+	--path ../chaincode/build/libs \
+	--lang java \
+	--label mychaincode_v1
+
+# Instasll the chaincode on this peer
+peer lifecycle chaincode install mychaincode.tar.gz
 
 exit 1

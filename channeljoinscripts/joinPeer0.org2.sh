@@ -36,5 +36,8 @@ done
 peer channel list
 peer channel getinfo -c mychannel
 
+# Install the chaincode
+peer lifecycle chaincode install mychaincode.tar.gz
+
 
 exit 1
