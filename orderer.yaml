@@ -312,7 +312,7 @@ Debug:
 ################################################################################
 Operations:
     # host and port for the operations server
-    ListenAddress: 127.0.0.1:8443
+    ListenAddress: 0.0.0.0:9443
 
     # TLS configuration for the operations endpoint
     TLS:
@@ -342,7 +342,7 @@ Operations:
 ################################################################################
 Metrics:
     # The metrics provider is one of statsd, prometheus, or disabled
-    Provider: disabled
+    Provider: prometheus
 
     # The statsd configuration
     Statsd:

@@ -29,3 +29,8 @@ export FABRIC_CFG_PATH=$PWD/config/ # where configtx.yaml is stored
 
 # How to set environment variables properly
 - source ./setPeerEnv.sh org1 peer0 # Important to have the source there as it makes it run in the same terminal and not a different one.
+
+
+# Prometheus
+- run Prometheus in a docker container, using docker-compose.yaml. Ensure that it is in the same network as the other nodes (fabric-network)
+- configuration for prometheus is inside prometheus-docker/prometheus.yaml

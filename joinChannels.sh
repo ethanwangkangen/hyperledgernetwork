@@ -7,3 +7,12 @@ cd channeljoinscripts
 
 echo "================= All peers have joined the channel successfully ================="
 
+./approveOrg1.sh
+./approveOrg2.sh
+
+
+echo "================= Organisations approved ================="
+
+./commitChaincode.sh
+
+echo "================= Chaincode committed ================="

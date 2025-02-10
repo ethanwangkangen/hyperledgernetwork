@@ -1,5 +1,3 @@
-# Joins peer0.org2 to network with orderer0
-
 export PATH=${PWD}/../bin:$PATH # where are binaries located. contain tools like cryptogen..
 export FABRIC_CFG_PATH=$PWD/.. # where configtx.yaml file is located.
 export CORE_PEER_TLS_ENABLED=true
@@ -13,28 +11,19 @@ export CORE_PEER_LOGGING=DEBUG
 export FABRIC_LOGGING=debug
 
 
-MAX_RETRIES=5  # Number of times to retry
-RETRY_DELAY=5  # Delay in seconds between retries
-BLOCK_PATH="../channel-artifacts/mychannel.block"
-
-for ((i=1; i<=MAX_RETRIES; i++)); do
-    echo "Attempt $i: Joining channel..."#
-        if peer channel join -b ../channel-artifacts/mychannel.block; then
-                echo "Peer0.org2 has joined the channel successfully."
-                break
-        else
-        echo "Failed to join channel. Retrying in $RETRY_DELAY seconds..."
-                sleep $RETRY_DELAY
-        fi
-
-done
+# Approve the chaincode for org 2
+PACKAGE_ID=$(peer lifecycle chaincode queryinstalled | awk -F': ' '/Package ID:/ {print $2}' | awk -F', ' '{print $1}' | head -n 1)
 
 
-peer channel list
-peer channel getinfo -c mychannel
+peer lifecycle chaincode approveformyorg \
+    -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com \
+    --channelID mychannel \
+    --name mychaincode \
+    --version 1.0 \
+    --package-id $PACKAGE_ID \
+    --sequence 1 \
+    --tls \
+    --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
 
-# Install the chaincode
-peer lifecycle chaincode install mychaincode.tar.gz
 
 
-exit 1
