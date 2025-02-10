@@ -54,8 +54,36 @@ peer lifecycle chaincode package mychaincode.tar.gz \
 # Install the chaincode on this peer
 peer lifecycle chaincode install mychaincode.tar.gz
 
-# Instantiate the chaincode (ie. install it on the channel)
-peer chaincode instantiate -o localhost:7049 --channelID mychannel --ordererTLSHostnameOverride orderer.example.com --name mychaincode --version 1.0 --init-required -c '{"Args":["init","a","100","b","200"]}' --ctor '{"Args":["init","a","100","b","200"]}' --tls --cafile --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+# Instantiate the chaincode (ie. install it on the channel) # Update: this seems to be depracated
+# peer chaincode instantiate -o localhost:7049 --channelID mychannel --ordererTLSHostnameOverride orderer.example.com --name mychaincode --version 1.0 --init-required -c '{"Args":["init","a","100","b","200"]}' --ctor '{"Args":["init","a","100","b","200"]}' --tls --cafile --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
 
+#peer lifecycle chaincode queryinstalled
+PACKAGE_ID=$(peer lifecycle chaincode queryinstalled | awk -F': ' '/Package ID:/ {print $2}' | awk -F', ' '{print $1}' | head -n 1)
+
+# Approve the chaincode definition for organisation 1
+#peer lifecycle chaincode approveformyorg \
+#	--channelID mychannel \
+#	--name mychaincode \
+#	--version 1.0 \
+#	--package-id mychaincode_v1:99e91b0e05c7e7c9037430f4db4b4954ff0a35fbb461b7b0865e6f5580c2e044 \
+#	--sequence 1 \
+#	--tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+#	-o localhost:7049  --ordererTLSHostnameOverride orderer.example.com 
+
+peer lifecycle chaincode approveformyorg \
+	-o localhost:7049 --ordererTLSHostnameOverride orderer.example.com \
+    --channelID mychannel \
+    --name mychaincode \
+    --version 1.0 \
+    --package-id $PACKAGE_ID \
+    --sequence 1 \
+    --tls \
+    --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+
+
+
+
+#peer lifecycle chaincode queryapproved --channelID mychannel --name mychaincode
 
 exit 1
+ 

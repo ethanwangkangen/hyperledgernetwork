@@ -39,5 +39,20 @@ peer channel getinfo -c mychannel
 # Install the chaincode
 peer lifecycle chaincode install mychaincode.tar.gz
 
+# Approve the chaincode for org 2
+PACKAGE_ID=$(peer lifecycle chaincode queryinstalled | awk -F': ' '/Package ID:/ {print $2}' | awk -F', ' '{print $1}' | head -n 1)
+
+
+peer lifecycle chaincode approveformyorg \
+    -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com \
+    --channelID mychannel \
+    --name mychaincode \
+    --version 1.0 \
+    --package-id $PACKAGE_ID \
+    --sequence 1 \
+    --tls \
+    --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+
+
 
 exit 1
