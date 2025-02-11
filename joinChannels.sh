@@ -20,3 +20,5 @@ sleep 60 # The above seems to take a while to approve chaincodes properly
 ./commitChaincode.sh
 
 echo "================= Chaincode committed ================="
+
+peer lifecycle chaincode querycommitted --channelID mychannel --name mychaincode --cafile "${PWD}/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
