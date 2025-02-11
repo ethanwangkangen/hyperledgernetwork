@@ -6,7 +6,7 @@ import org.hyperledger.fabric.contract.Context;
 
 import java.util.logging.Logger;
 
-@Contract(name = "MyChaincode")
+@Contract(name = "MyChaincode") //change to myChaincode??
 @Default
 public class MyChaincode implements ContractInterface {
     
