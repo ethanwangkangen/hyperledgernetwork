@@ -41,15 +41,15 @@ done
 peer channel list
 peer channel getinfo -c mychannel
 
-#peer channel fetch config config_block.pb -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com -c mychannel --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
-#configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
-#jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
+peer channel fetch config config_block.pb -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com -c mychannel --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
+jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
 
 # Package the chaincode into mychaincode.tar.gz, will be inside this directory
 peer lifecycle chaincode package mychaincode.tar.gz \
 	--path ../chaincode/build/libs \
 	--lang java \
-	--label mychaincode_v1
+	--label mychaincode
 
 # Install the chaincode on this peer
 peer lifecycle chaincode install mychaincode.tar.gz

@@ -32,6 +32,7 @@ services:
 #      - "11111:11111"
 #    command: sh -c 'fabric-ca-server start -b admin:adminpw'
 
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -47,7 +48,7 @@ services:
   orderer.example.com:
     image: hyperledger/fabric-orderer:2.5
     environment:
-      - FABRIC_LOGGING_SPEC=DEBUG
+      
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7049 # use this port when joining peer to channel. inside joinchannel.sh
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
@@ -279,6 +280,7 @@ services:
     #  - CORE_PEER_MSPCONFIGPATH="./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9448
       - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
     volumes:
       #- ./peer0.org1.example.com:/etc/hyperledger
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
@@ -311,7 +313,7 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9449
       - CORE_METRICS_PROVIDER=prometheus
-
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
       - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
@@ -343,7 +345,7 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9450
       - CORE_METRICS_PROVIDER=prometheus
-
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
     volumes:
       - ./crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
       - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp
@@ -374,6 +376,7 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9451
       - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
     volumes:
       - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
       - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp

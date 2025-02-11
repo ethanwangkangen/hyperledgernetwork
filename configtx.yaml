@@ -32,8 +32,8 @@ Organizations:
         Type: Signature
         Rule: "OR('Org1MSP.admin', 'Org1MSP.peer')"
     AnchorPeers:
-      # - Host: peer0.org1.example.com
-      #   Port: 7051
+       - Host: peer0.org1.example.com
+         Port: 11051
 
   - &Org2
     Name: Org2MSP
@@ -53,8 +53,8 @@ Organizations:
         Type: Signature
         Rule: "OR('Org2MSP.admin', 'Org2MSP.peer')"
     AnchorPeers:
-      # - Host: peer0.org2.example.com
-      #   Port: 8051
+       - Host: peer0.org2.example.com
+         Port: 13051
 
 # Capabilities:
 #   # Channel capabilities apply to both the orderers and the peers and must be
