@@ -269,7 +269,9 @@ services:
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:11051  # Updated port for Peer0
       - CORE_PEER_LISTENADDRESS=0.0.0.0:11051  # Updated
-      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:11052  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:11052  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_PEER_EVENTSADDRESS=peer0.org1.example.com:11053  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:11051  # Updated
@@ -303,7 +305,8 @@ services:
       - CORE_PEER_ID=peer1.org1.example.com
       - CORE_PEER_ADDRESS=peer1.org1.example.com:11054  # Updated port for Peer0
       - CORE_PEER_LISTENADDRESS=0.0.0.0:11054  # Updated
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org1.example.com:11055  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer1.org1.example.com:11055  # Updated
+      - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_PEER_EVENTSADDRESS=peer1.org1.example.com:11056  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.example.com:11054  # Updated
@@ -335,7 +338,9 @@ services:
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:13051  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13051  # Updated
-      - CORE_PEER_CHAINCODEADDRESS=peer0.org2.example.com:13052  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer0.org2.example.com:13052  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
+      - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_PEER_EVENTSADDRESS=peer0.org2.example.com:13053  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:13051  # Updated
@@ -366,7 +371,9 @@ services:
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:13054  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13054  # Updated
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:13055  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:13055  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
+      - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_PEER_EVENTSADDRESS=peer1.org2.example.com:13056  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:13054  # Updated
