@@ -31,7 +31,35 @@ services:
 #    ports:
 #      - "11111:11111"
 #    command: sh -c 'fabric-ca-server start -b admin:adminpw'
+  caliper:
+    container_name: caliper
+    image: hyperledger/caliper:0.6.0
+    command: launch manager
+    environment:
+      - CALIPER_BIND_SUT=fabric:fabric-gateway
+      - CALIPER_BENCHCONFIG=benchmarks/config.yaml
+      - CALIPER_NETWORKCONFIG=networks/network-config.yaml
+      - npm_config_strict_ssl=false # This is not secure.
+    volumes:
+      - ./caliper:/hyperledger/caliper/workspace
+      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
+      - ./crypto-config:/hyperledger/caliper/crypto-config
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_AUTH_PROXY_ENABLED=true
+      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
+    volumes:
+      - ./provisioning/:/var/lib/grafana/provisioning/
+    ports:
+      - 3000:3000
+    networks:
+      - fabric-network
+    depends_on:
+      - prometheus
 
   prometheus:
     image: prom/prometheus:latest

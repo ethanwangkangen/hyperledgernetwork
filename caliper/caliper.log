@@ -1,0 +1,10 @@
+2025.02.13-14:48:33.035[90m debug[39m [caliper] [rateControl.js] 	Constructed a winston logger with the specified settings
+2025.02.13-14:48:33.219[33m warn [39m [caliper] [bind] 	Working directory not specified. Using "/home/wkangen/hlf/hyperledgernetwork/caliper"
+2025.02.13-14:48:33.220[32m info [39m [caliper] [bind] 	Binding for fabric@2.2. This might take some time...
+2025.02.13-14:48:33.220[32m info [39m [caliper] [bind] 	Using working directory: /home/wkangen/hlf/hyperledgernetwork/caliper
+2025.02.13-14:48:33.221[32m info [39m [caliper] [bind] 	Calling npm with: install fabric-network@2.2.3 fabric-ca-client@2.2.3
+2025.02.13-14:48:59.303[90m debug[39m [caliper] [rateControl.js] 	Constructed a winston logger with the specified settings
+2025.02.13-14:48:59.385[33m warn [39m [caliper] [bind] 	Working directory not specified. Using "/home/wkangen/hlf/hyperledgernetwork/caliper"
+2025.02.13-14:48:59.386[32m info [39m [caliper] [bind] 	Binding for fabric@2.2. This might take some time...
+2025.02.13-14:48:59.386[32m info [39m [caliper] [bind] 	Using working directory: /home/wkangen/hlf/hyperledgernetwork/caliper
+2025.02.13-14:48:59.387[32m info [39m [caliper] [bind] 	Calling npm with: install fabric-network@2.2.3 fabric-ca-client@2.2.3

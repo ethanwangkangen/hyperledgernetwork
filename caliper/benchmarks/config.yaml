@@ -1,0 +1,36 @@
+test:
+  name: "FabricBenchmarkTest"
+  description: "Benchmark test for invoking and querying a chaincode on a Fabric network"
+  workers:
+    type: local
+    number: 1
+  rounds:
+    - label: "Invoke Transactions"
+      description: "Invoke transactions at a fixed rate"
+      txNumber: 100
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 5
+      workload:
+        module: workload/invoke.js
+        arguments:
+          assetPrefix: "asset"
+#          contractId: myChaincode
+#          contractFunction: "createAsset"
+#          contractArguments: ["arg1", "arg2"]
+    - label: "Query Transactions"
+      description: "Query transactions at a fixed rate"
+      txNumber: 50
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 2
+      workload:
+        module: workload/query.js
+        arguments:
+          assetPrefix: "asset"
+#          contractId: myChaincode
+#          contractFunction: "readAsset"
+#          contractArguments: ["arg1"]
+
