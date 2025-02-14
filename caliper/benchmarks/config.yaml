@@ -1,6 +1,9 @@
 test:
   name: "FabricBenchmarkTest"
   description: "Benchmark test for invoking and querying a chaincode on a Fabric network"
+  network:
+    name: fabric-network
+    profile: ../../connection-profile.json
   workers:
     type: local
     number: 1
@@ -16,9 +19,9 @@ test:
         module: workload/invoke.js
         arguments:
           assetPrefix: "asset"
-#          contractId: myChaincode
-#          contractFunction: "createAsset"
-#          contractArguments: ["arg1", "arg2"]
+          contractId: mychaincode
+          contractFunction: "createAsset"
+          contractArguments: ["arg1", "arg2"]
     - label: "Query Transactions"
       description: "Query transactions at a fixed rate"
       txNumber: 50
@@ -30,7 +33,7 @@ test:
         module: workload/query.js
         arguments:
           assetPrefix: "asset"
-#          contractId: myChaincode
-#          contractFunction: "readAsset"
-#          contractArguments: ["arg1"]
+          contractId: mychaincode
+          contractFunction: "readAsset"
+          contractArguments: ["arg1"]
 

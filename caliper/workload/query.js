@@ -18,7 +18,7 @@ class ReadAssetWorkload extends WorkloadModuleBase {
         const assetKey = `${this.assetPrefix}_${this.workerIndex}_${this.txIndex}`;
 
         const args = {
-            contractId: 'myChaincode',
+            contractId: 'mychaincode',
             contractFunction: 'readAsset',
             contractArguments: [assetKey],
             timeout: 30,

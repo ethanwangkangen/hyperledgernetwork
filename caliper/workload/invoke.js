@@ -19,7 +19,7 @@ class CreateAssetWorkload extends WorkloadModuleBase {
         const assetValue = `value_${this.txIndex}`;
 
         const args = {
-            contractId: 'myChaincode',
+            contractId: 'mychaincode',
             contractFunction: 'createAsset',
             contractArguments: [assetKey, assetValue],
             timeout: 30,

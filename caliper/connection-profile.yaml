@@ -1,0 +1,70 @@
+name: fabric
+description: "Sample connection profile for documentation topic"
+version: 2.0.0
+channels:
+  mychannel:
+    orderers:
+      - orderer.example.com
+    peers:
+      peer0.org1.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+  
+      peer0.org2.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+    
+      peer1.org1.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.org2.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+organizations:
+  Org1:
+    mspid: Org1MSP
+    peers:
+      - peer0.org1.example.com
+      - peer1.org1.example.com
+  Org2:
+    mspid: Org2MSP
+    peers:
+      - peer0.org2.example.com
+      - peer1.org2.example.com
+
+orderers:
+  orderer.example.com:
+    url: grpcs://orderer.example.com:7049
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+peers:
+  peer0.org1.example.com:
+    url: grpcs://peer0.org1.example.com:11051
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.example.com
+      request-timeout: 120001
+  peer1.org1.example.com:
+    url: grpcs://peer1.org1.example.com:11054
+    grpcOptions:
+      ssl-target-name-override: peer1.org1.example.com
+      request-timeout: 120001
+  peer0.org2.example.com:
+    url: grpcs://peer0.org2.example.com:13051
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.example.com
+      request-timeout: 120001
+  peer1.org2.example.com:
+    url: grpcs://peer1.org2.example.com:13054
+    grpcOption:
+      ssl-target-name-override: peer1.org2.example.com
+      request-timeout: 120001
