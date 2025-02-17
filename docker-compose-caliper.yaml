@@ -11,12 +11,13 @@ services:
     command: launch manager
     environment:
       - CALIPER_BIND_SUT=fabric:fabric-gateway
-      - CALIPER_BENCHCONFIG=benchmarks/config.yaml
-      - CALIPER_NETWORKCONFIG=networks/network-config.yaml
+      - CALIPER_BENCHCONFIG=/hlf/hyperledgernetwork/caliper/benchmarks/config.yaml
+      - CALIPER_NETWORKCONFIG=/hlf/hyperledgernetwork/caliper/networks/network-config.yaml
       - npm_config_strict_ssl=false # This is not secure.
       - CALIPER_LOGLEVEL=debug
     volumes:
-      - ./caliper:/hyperledger/caliper/workspace
-      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
-      - ./crypto-config:/hyperledger/caliper/crypto-config
+      - ./:/hlf/hyperledgernetwork
+#      - ./caliper:/hyperledger/caliper/workspace
+#      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
+#      - ./crypto-config:/hyperledger/caliper/crypto-config
 

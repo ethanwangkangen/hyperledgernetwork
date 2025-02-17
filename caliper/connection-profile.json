@@ -31,7 +31,7 @@
     "orderer1.example.com": {
       "url": "grpcs://order.example.com:7049",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+        "path": "/hlf/hyperledgernetwork/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "orderer.example.com"
@@ -40,7 +40,7 @@
     "orderer2.example.com": {
       "url": "grpcs://orderer2.example.com:7054",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+        "path": "/hlf/hyperledgernetwork/crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "orderer2.example.com"
@@ -49,7 +49,7 @@
     "orderer3.example.com": {
       "url": "grpcs://order3.example.com:7059",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+        "path": "/hlf/hyperledgernetwork/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "orderer3.example.com"
@@ -58,7 +58,7 @@
     "orderer4.example.com": {
       "url": "grpcs://order4.example.com:7064",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+        "path": "/hlf/hyperledgernetwork/crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "orderer4.example.com"
@@ -67,7 +67,7 @@
     "orderer5.example.com": {
       "url": "grpcs://order5.example.com:7069",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+        "path": "/hlf/hyperledgernetwork/crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "orderer5.example.com"
@@ -96,7 +96,7 @@
     "peer0.org1.example.com": {
       "url": "grpcs://peer0.org1.example.com:11051",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
+        "path": "../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "peer0.org1.example.com"
@@ -108,7 +108,7 @@
     "peer1.org1.example.com": {
       "url": "grpcs://peer1.org1.example.com:11054",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
+        "path": "../crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "peer1.org1.example.com"
@@ -117,19 +117,19 @@
     "peer0.org2.example.com": {
       "url": "grpcs://peer0.org2.example.com:13051",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
+        "path": "../crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "peer0.org2.example.com"
       },
       "gateway": {
         "enabled": true
-      }
+      } 
     },
     "peer1.org2.example.com": {
       "url": "grpcs://peer1.org2.example.com:13054",
       "tlsCACerts": {
-        "path": "/hyperledger/caliper/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
+        "path": "../crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
       },
       "grpcOptions": {
         "ssl-target-name-override": "peer1.org2.example.com"

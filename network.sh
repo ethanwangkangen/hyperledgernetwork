@@ -88,14 +88,6 @@ function generateChannel() {
 }
 
 
-function createWallet() {
-    node wallet_creation.js
-}
-
-function joinChannels() {
-    ./joinChannels.sh
-}
-
 
 # Main entry point: check for the first argument ("up" or "down")
 if [ "$1" == "createChannel" ]; then
@@ -108,7 +100,6 @@ elif [ "$1" == "down" ]; then
 elif [ "$1" == "x" ]; then
 	stopNetwork
 	startNetwork
-	joinChannels
 	docker ps
 else
     echo "Usage: $0 {up|down}"
