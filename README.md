@@ -55,7 +55,10 @@ export FABRIC_CFG_PATH=$PWD/config/ # where configtx.yaml is stored
 
 
 
-
+# Caliper
+- cd into /caliper
+- ensure network is running and peers are joined to channel
+- ./run.sj
 
 
 
