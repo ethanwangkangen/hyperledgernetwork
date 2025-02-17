@@ -1,16 +1,16 @@
 networks:
-  hyperledgernetwork_fabric-network:
+  fabric-network:
     driver: bridge
     external: true
 services:
   caliper:
     networks:
-      - hyperledgernetwork_fabric-network
+      - fabric-network
     container_name: caliper
     image: hyperledger/caliper:0.6.0
-    command: launch manager unbind
+    command: launch manager
     environment:
-      - CALIPER_BIND_SUT=fabric:2.2
+      - CALIPER_BIND_SUT=fabric:fabric-gateway
       - CALIPER_BENCHCONFIG=benchmarks/config.yaml
       - CALIPER_NETWORKCONFIG=networks/network-config.yaml
       - npm_config_strict_ssl=false # This is not secure.

@@ -2,6 +2,7 @@ version: '3.7'
 
 networks:
   fabric-network:
+    name: fabric-network
     driver: bridge
 
 volumes:
@@ -45,38 +46,38 @@ services:
 #      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
 #      - ./crypto-config:/hyperledger/caliper/crypto-config
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    hostname: grafana
-    environment:
-      - GF_AUTH_PROXY_ENABLED=true
-      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
-    volumes:
-      - ./provisioning/:/var/lib/grafana/provisioning/
-    ports:
-      - 3000:3000
-    networks:
-      - fabric-network
-    depends_on:
-      - prometheus
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: grafana
+#    hostname: grafana
+#    environment:
+#      - GF_AUTH_PROXY_ENABLED=true
+#      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
+#    volumes:
+#      - ./provisioning/:/var/lib/grafana/provisioning/
+#    ports:
+#      - 3000:3000
+#    networks:
+#      - fabric-network
+#    depends_on:
+#      - prometheus
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
-    ports:
-      - "9090:9090"  # Expose Prometheus web UI on port 9090
-    restart: always
-    networks:
-      - fabric-network
+#  prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus
+#    volumes:
+#      - ./prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
+#    ports:
+#      - "9090:9090"  # Expose Prometheus web UI on port 9090
+#    restart: always
+#    networks:
+#      - fabric-network
 
   # Orderer Nodes
   orderer.example.com:
     image: hyperledger/fabric-orderer:2.5
     environment:
-      
+
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7049 # use this port when joining peer to channel. inside joinchannel.sh
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP

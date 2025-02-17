@@ -3,7 +3,6 @@ test:
   description: "Benchmark test for invoking and querying a chaincode on a Fabric network"
   network:
     name: fabric-network
-    profile: ../../connection-profile.json
   workers:
     type: local
     number: 1

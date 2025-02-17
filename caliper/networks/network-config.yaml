@@ -1,12 +1,12 @@
 name: TestFabricNetwork
 version: "2.0.0"
-mutual-tls: true
+mutual-tls: false
 
 caliper:
   blockchain: fabric
   sutOptions:
-    gateway-enabled: false
-    gateway: false
+    gateway-enabled: true
+    gateway: true
 #  command:
 #    start: network.sh x
 
@@ -77,7 +77,7 @@ organizations:
         clientSignedCert:
           path: /hyperledger/caliper/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
     connectionProfile:
-      path: './connection-profile.yaml'
+      path: './connection-profile.json'
       discover: true
  #   peers:
  #     - endpoint: peer0.org1.example.com:7051

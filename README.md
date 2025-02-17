@@ -34,3 +34,38 @@ export FABRIC_CFG_PATH=$PWD/config/ # where configtx.yaml is stored
 # Prometheus
 - run Prometheus in a docker container, using docker-compose.yaml. Ensure that it is in the same network as the other nodes (fabric-network)
 - configuration for prometheus is inside prometheus-docker/prometheus.yaml
+
+
+# Grafana 
+- Grafana also set up. Should connect to Prometheus
+
+
+
+-----------------------------------------------
+
+# Fabric gateway
+- Gateway is really just peers
+- Gateway enabled in core.yaml/docker-compose.yaml for the peers
+- Connection-profile.json -> Config files to be used, from perspective of org1
+- node wallet_creation.js to add User1 identity to the wallet. Need to do this at this everytime network is reset since
+  the certificates are regenerated and will need to be replaced in the wallet
+- then node client.js to run the client. Will attempt to contact fabric gateway and invoke a transaction.
+- of course, channel and chaincode will all have to be set up before this, so ./joinchannels.sh has to be run beforehand
+- make sure asLocalHost is true in client.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
