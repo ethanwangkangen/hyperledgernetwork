@@ -5,16 +5,16 @@ test:
     name: fabric-network
   workers:
     type: local
-    number: 5
+    number: 10
   rounds:
     - label: "Invoke Transactions"
       description: "Invoke transactions at a fixed rate"
-      txNumber: 400
+      txNumber: 100
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          startTps: 30
-          transactionLoad: 5
+          tps: 10
+         # transactionLoad: 5
       workload:
         module: workload/invoke.js
         arguments:
@@ -24,12 +24,12 @@ test:
           contractArguments: ["arg1", "arg2"]
     - label: "Query Transactions"
       description: "Query transactions at a fixed rate"
-      txNumber: 400
+      txNumber: 100
       rateControl:
         type: fixed-rate
         opts:
-          startTps: 30
-          transactionLoad: 5
+          tps: 10
+        #  transactionLoad: 2
       workload:
         module: workload/query.js
         arguments:

@@ -18,6 +18,6 @@ npm config set strict-ssl false
 npx caliper launch manager \
     --caliper-workspace ./ \
     --caliper-networkconfig networks/network-config.yaml  \
-    --caliper-benchconfig benchmarks/config.yaml \
+    --caliper-benchconfig benchmarks/max-rate-1.yaml \
     --caliper-flow-only-test
 

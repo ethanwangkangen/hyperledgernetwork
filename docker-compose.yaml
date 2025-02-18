@@ -73,7 +73,6 @@ services:
     networks:
       - fabric-network
 
-  # Orderer Nodes
   orderer.example.com:
     image: hyperledger/fabric-orderer:2.5
     environment:
@@ -113,6 +112,8 @@ services:
 
       - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
       - orderer.example.com:/var/hyperledger/production/orderer
+
+      - ./orderer.yaml:/etc/hyperledger/fabric/orderer.yaml
 
     networks:
       - fabric-network
