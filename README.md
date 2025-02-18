@@ -58,9 +58,10 @@ export FABRIC_CFG_PATH=$PWD/config/ # where configtx.yaml is stored
 # Caliper
 - cd into /caliper
 - ensure network is running and peers are joined to channel
-- ./run.sj
+- ./run.sh
 
-
+# Issues with fabric gateway
+- Now have some problem with gateway (wallet_creation.js and client.js), but caliper works.
 
 
 
