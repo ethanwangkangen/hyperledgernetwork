@@ -9,12 +9,12 @@ test:
   rounds:
     - label: "Invoke Transactions"
       description: "Invoke transactions at a fixed rate"
-      txNumber: 400
+      txNumber: 1000
       rateControl:
         type: maximum-rate
         opts:
-          tps: 10
-          step: 10
+          tps: 100
+          step: 100
           #transactionLoad: 5
       workload:
         module: workload/invoke.js
@@ -25,12 +25,12 @@ test:
           contractArguments: ["arg1", "arg2"]
     - label: "Query Transactions"
       description: "Query transactions at a fixed rate"
-      txNumber: 400
+      txNumber: 1000
       rateControl:
         type: maximum-rate
         opts:
-          tps: 10
-          step: 10
+          tps: 100
+          step: 100
           #transactionLoad: 5
       workload:
         module: workload/query.js

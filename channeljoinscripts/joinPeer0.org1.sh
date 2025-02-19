@@ -14,11 +14,11 @@ export CORE_PEER_LOGGING=INFO
 export FABRIC_LOGGING=INFO
 
 # Create the channel by passing the transaction file
-if peer channel create -o localhost:7049  --ordererTLSHostnameOverride orderer.example.com -c mychannel -f ../channel-artifacts/mychannel.tx --outputBlock ../channel-artifacts/mychannel.block --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" ; then
-	echo "Channel mychannel has been created successfully."
-else
-	echo "Problem creating channel."
-fi
+#if peer channel create -o localhost:7049  --ordererTLSHostnameOverride orderer.example.com -c mychannel -f ../channel-artifacts/mychannel.tx --outputBlock ../channel-artifacts/mychannel.block --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" ; then
+#	echo "Channel mychannel has been created successfully."
+#else
+#	echo "Problem creating channel."
+#fi
 
 
 MAX_RETRIES=5  # Number of times to retry
