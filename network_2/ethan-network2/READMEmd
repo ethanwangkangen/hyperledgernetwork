@@ -1,6 +1,0 @@
-Generate crypto config: crypto-config.yaml
-
-Different folders for different peers/nodes containing their core.yaml/orderer.yaml files.
-
-To start a peer,
-sudo ./peer0.start.sh

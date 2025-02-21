@@ -1105,7 +1105,7 @@
 										"epoch": "0",
 										"extension": null,
 										"timestamp": "2025-02-20T01:07:38Z",
-										"tls_cert_hash": null,
+										"tls_cert_hash": "",
 										"tx_id": "",
 										"type": 2,
 										"version": 0
@@ -1128,7 +1128,7 @@
 							"epoch": "0",
 							"extension": null,
 							"timestamp": "2025-02-20T01:07:38Z",
-							"tls_cert_hash": null,
+							"tls_cert_hash": "",
 							"tx_id": "",
 							"type": 1,
 							"version": 0
@@ -1149,7 +1149,7 @@
 	"header": {
 		"data_hash": "jNCw+GqPFcaxjMuJwoeEmJaTquEJUogPobYFmgZEzNk=",
 		"number": "0",
-		"previous_hash": null
+		"previous_hash": ""
 	},
 	"metadata": {
 		"metadata": [

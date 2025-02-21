@@ -114,10 +114,12 @@ peer:
         # connection with ordering service and use delivery protocol
         # to pull ledger blocks from ordering service.
         useLeaderElection: false
-        # Statically defines peer to be an organization "leader",
-        # where this means that current peer will maintain connection
-        # with ordering service and disseminate block across peers in
-        # its own organization. Multiple peers or all peers in an organization
+        # Statically defines peer to be an organization "leader".
+        # Organization leaders maintain connection with ordering service
+        # and pulls blocks as they are created. Optionally, leader peers
+        # may disseminate pulled blocks to peers in its own organization
+        # based on the peer.deliveryclient.blockGossipEnabled setting below.
+        # Multiple peers or all peers in an organization
         # may be configured as org leaders, so that they all pull
         # blocks directly from ordering service.
         orgLeader: true
@@ -203,7 +205,7 @@ peer:
             # and the private data residing inside the transient store that is guaranteed not to be purged.
             # Private data is purged from the transient store when blocks with sequences that are multiples
             # of transientstoreMaxBlockRetention are committed.
-            transientstoreMaxBlockRetention: 1000
+            transientstoreMaxBlockRetention: 20000
             # pushAckTimeout is the maximum time to wait for an acknowledgement from each peer
             # at private data push at endorsement time.
             pushAckTimeout: 3s
@@ -242,10 +244,10 @@ peer:
 
         # Gossip state transfer related configuration
         state:
-            # indicates whenever state transfer is enabled or not
-            # default value is false, i.e. state transfer is active
-            # and takes care to sync up missing blocks allowing
-            # lagging peer to catch up to speed with rest network.
+            # Indicates whether state transfer is enabled.
+            # State transfer enabled allows a peer that is not a leader
+            # to sync up missed blocks from other peers.
+            # Default value is false since the recommended value of peer.gossip.orgleader is true.
             # Keep in mind that when peer.gossip.useLeaderElection is true
             # and there are several peers in the organization,
             # or peer.gossip.useLeaderElection is false alongside with
@@ -310,8 +312,9 @@ peer:
     # client messages
     authentication:
         # the acceptable difference between the current server time and the
-        # client's time as specified in a client request message.
-        # timewindow is checked on requests to the delivery service only.
+        # client's time as specified in a client request message
+        # this value is used for delivery service and
+        # endorsement service (if the authFilter is enabled)
         timewindow: 15m
 
     # Path on the file system where peer will store data (eg ledger). This
@@ -370,11 +373,11 @@ peer:
 
     # Delivery service related config
     deliveryclient:
-        # Enables this peer to disseminate blocks it pulled from the ordering service
-        # via gossip.
+        # Enables this peer to disseminate blocks it pulls from the ordering service
+        # to other peers in the same organization via gossip.
         # Note that 'gossip.state.enabled' controls point to point block replication
         # of blocks committed in the past.
-        blockGossipEnabled: true
+        blockGossipEnabled: false
         # It sets the total time the delivery service may spend in reconnection
         # attempts until its retry logic gives up and returns an error,
         # ignored if peer is a static leader
@@ -387,6 +390,13 @@ peer:
         # Time between retries will have exponential backoff until hitting this threshold.
         reConnectBackoffThreshold: 3600s
 
+        # If a certain header from a header receiver is in front of the block receiver for more that this time, a
+        # censorship event is declared and the block source is changed.
+        blockCensorshipTimeoutKey: 30s
+
+        # The initial value of the actual retry interval, which is increased on every failed retry
+        minimalReconnectInterval: 100ms
+
         # A list of orderer endpoint addresses which should be overridden
         # when found in channel configurations.
         addressOverrides:
@@ -396,6 +406,12 @@ peer:
         #  - from:
         #    to:
         #    caCertsFile:
+
+        # Determines which delivery client will be used when consensus type is "BFT"
+        # (when consensus type is "etcdraft" this key is ignored).
+        # "simple" - use CFT deliverer
+        # "cluster" - use BFT deliverer
+        policy: cluster
 
     # Type for the local MSP - by default it's of type bccsp
     localMspType: bccsp
@@ -440,13 +456,11 @@ peer:
     #     library: /etc/hyperledger/fabric/plugin/escc.so
     handlers:
         authFilters:
-          -
-            name: DefaultAuth
-          -
-            name: ExpirationCheck    # This filter checks identity x509 certificate expiration
+          - name: DefaultAuth
+          - name: ExpirationCheck # This filter checks identity x509 certificate expiration
+          - name: TimeWindowCheck # This filter checks the timestamp of an proposal request with the peer.authentication.timewindow parameter from core.yaml
         decorators:
-          -
-            name: DefaultDecorator
+          - name: DefaultDecorator
         endorsers:
           escc:
             name: DefaultEndorsement
@@ -478,7 +492,7 @@ peer:
         authCachePurgeRetentionRatio: 0.75
         # Whether to allow non-admins to perform non channel scoped queries.
         # When this is false, it means that only peer admins can perform non channel scoped queries.
-        orgMembersAllowedAccess: true
+        orgMembersAllowedAccess: false
 
     # Limits is used to configure some internal resource limits.
     limits:
@@ -568,7 +582,8 @@ chaincode:
         path:
         name:
 
-    # Generic builder environment, suitable for most chaincode types
+    # Generic builder image with Go pre-installed.
+    # TWO_DIGIT_VERSION represents Fabric major.minor version.
     builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
 
     # Enables/disables force pulling of the base docker images (listed below)
@@ -577,22 +592,23 @@ chaincode:
     pull: false
 
     golang:
-        # golang will never need more than baseos
+        # Compiled Go chaincodes will be copied to the fabric-baseos runtime image.
+        # TWO_DIGIT_VERSION represents Fabric major.minor version.
         runtime: $(DOCKER_NS)/fabric-baseos:$(TWO_DIGIT_VERSION)
 
         # whether or not golang chaincode should be linked dynamically
         dynamicLink: false
 
     java:
-        # This is an image based on java:openjdk-8 with addition compiler
+        # This is an image based on eclipse temurin with addition compiler
         # tools added for java shim layer packaging.
         # This image is packed with shim layer libraries that are necessary
         # for Java chaincode runtime.
-        runtime: $(DOCKER_NS)/fabric-javaenv:$(TWO_DIGIT_VERSION)
+        runtime: $(DOCKER_NS)/fabric-javaenv:2.5
 
     node:
         # This is an image based on node:$(NODE_VER)-alpine
-        runtime: $(DOCKER_NS)/fabric-nodeenv:$(TWO_DIGIT_VERSION)
+        runtime: $(DOCKER_NS)/fabric-nodeenv:2.5
 
     # List of directories to treat as external builders and launchers for
     # chaincode. The external builder detection processing will iterate over the
@@ -751,7 +767,7 @@ ledger:
 ###############################################################################
 operations:
     # host and port for the operations server
-    listenAddress: 0.0.0.0:9470
+    listenAddress: 127.0.0.1:9443
 
     # TLS configuration for the operations endpoint
     tls:
@@ -783,7 +799,7 @@ operations:
 ###############################################################################
 metrics:
     # metrics provider is one of statsd, prometheus, or disabled
-    provider: prometheus
+    provider: disabled
 
     # statsd configuration
     statsd:

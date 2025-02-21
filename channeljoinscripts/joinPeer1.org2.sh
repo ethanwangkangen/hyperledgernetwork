@@ -22,7 +22,7 @@ BLOCK_PATH="./channel-artifacts/mychannel.block"
 
 for ((i=1; i<=MAX_RETRIES; i++)); do
     echo "Attempt $i: Joining channel..."#
-        if peer channel join -b ../channel-artifacts/mychannel.block; then
+        if peer channel join -b ../channel-artifacts/genesis.block; then
                 echo "Peer0.org2 has joined the channel successfully."
                 break
         else

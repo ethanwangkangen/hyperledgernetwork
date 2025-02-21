@@ -14,11 +14,11 @@ export CORE_PEER_LOGGING=INFO
 export FABRIC_LOGGING=INFO
 
 # Create the channel by passing the transaction file
-if peer channel create -o localhost:7049  --ordererTLSHostnameOverride orderer.example.com -c mychannel -f ../channel-artifacts/mychannel.tx --outputBlock ../channel-artifacts/mychannel.block --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" ; then
-	echo "Channel mychannel has been created successfully."
-else
-	echo "Problem creating channel."
-fi
+#if peer channel create -o localhost:7049  --ordererTLSHostnameOverride orderer.example.com -c mychannel -f ../channel-artifacts/mychannel.tx --outputBlock ../channel-artifacts/genesis.block --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" ; then
+#	echo "Channel mychannel has been created successfully."
+#else
+#	echo "Problem creating channel."
+#fi
 
 
 MAX_RETRIES=5  # Number of times to retry
@@ -27,7 +27,7 @@ RETRY_DELAY=5  # Delay in seconds between retries
 
 for ((i=1; i<=MAX_RETRIES; i++)); do
     echo "Attempt $i: Joining channel..."#
-	if peer channel join -b ../channel-artifacts/mychannel.block; then
+	if peer channel join -b ../channel-artifacts/genesis.block; then
 		echo "Peer0.org1 has joined the channel successfully."
 		break
 	else
@@ -41,9 +41,9 @@ done
 peer channel list
 peer channel getinfo -c mychannel
 
-peer channel fetch config config_block.pb -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com -c mychannel --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
-configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
-jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
+#peer channel fetch config config_block.pb -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com -c mychannel --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+#configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
+#jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
 
 # Package the chaincode into mychaincode.tar.gz, will be inside this directory
 peer lifecycle chaincode package mychaincode.tar.gz \

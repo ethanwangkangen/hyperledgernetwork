@@ -1,5 +1,5 @@
-# This script brings up the network.
 
+# This script brings up the network.
 
 #!/bin/bash
 
@@ -78,15 +78,15 @@ function generateGenesis() {
     rm -rf channel-artifacts
     mkdir channel-artifacts
 #   configtxgen -profile ChannelUsingRaft -outputBlock ./system-genesis-block/genesis.block -channelID mychannel
-    configtxgen -profile ChannelUsingRaft -outputBlock ./channel-artifacts/genesis.block -channelID system-channel # Genesis block
+    configtxgen -profile ChannelUsingBFT -outputBlock ./channel-artifacts/genesis.block -channelID mychannel # Genesis block
 #    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
 
 }
 
-function generateChannel() {
-    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
-}
-
+#function generateChannel() {
+#    configtxgen -profile MyChannel -outputCreateChannelTx ./channel-artifacts/mychannel.tx -channelID mychannel # Application channel
+#}
+# NO longer needed in HLF 3.0
 
 
 # Main entry point: check for the first argument ("up" or "down")

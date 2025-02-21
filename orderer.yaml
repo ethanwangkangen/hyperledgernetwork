@@ -39,8 +39,6 @@ General:
         # It is not required to be set, but can be used to augment the set of TLS CA certificates
         # available from the MSPs of each channel’s configuration.
         ClientRootCAs:
-          - ./crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem
-          - ./crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem
     # Keepalive settings for the GRPC server.
     Keepalive:
         # ServerMinInterval is the minimum permitted time between client pings.
@@ -52,6 +50,15 @@ General:
         # ServerTimeout is the duration the server waits for a response from
         # a client before closing the connection.
         ServerTimeout: 20s
+    # Config defines the configuration options for backoff GRPC client.
+    Backoff:
+        # BaseDelay is the amount of time to backoff after the first failure.
+        BaseDelay: 1s
+        # Multiplier is the factor with which to multiply backoffs after a
+        # failed retry. Should ideally be greater than 1.
+        Multiplier: 1.6
+        # MaxDelay is the upper bound of backoff delay.
+        MaxDelay: 2m
 
     # Since all nodes should be consistent it is recommended to keep
     # the default value of 100MB for MaxRecvMsgSize & MaxSendMsgSize
@@ -59,6 +66,22 @@ General:
     MaxRecvMsgSize: 104857600
     # Max message size in bytes the GRPC server and client can send
     MaxSendMsgSize: 104857600
+    # Throttling prevents clients from sending too many transactions
+    # per second to the broadcast API of this node.
+    # It is only enforced when the Rate is non-zero, and when the client
+    # connects using mutual TLS.
+    # The effective rate of transactions is divided across all clients
+    # and organizations at a given unit of time governed by the inactivity timeout.
+    # When a client's rate of transaction submission exhausts its allocated budget,
+    # it is throttled until additional "budget" is allocated (it is allocated once per second).
+    Throttling:
+        # Rate is the maximum rate (transactions per second) for all clients combined.
+        # A zero rate disables throttling.
+        Rate: 0
+        # InactivityTimeout defines the time frame after which
+        # inactive clients are pruned from memory and are not considered
+        # when allocating the budget for throttling per client.
+        InactivityTimeout: 5s
 
     # Cluster settings for ordering service nodes that communicate with other ordering service nodes
     # such as Raft based ordering service.
@@ -92,20 +115,17 @@ General:
         # ServerPrivateKey defines the file location of the private key of the TLS certificate.
         ServerPrivateKey:
 
-    # Bootstrap method: The method by which to obtain the bootstrap block
-    # system channel is specified. The option can be one of:
-    #   "file" - path to a file containing the genesis block or config block of system channel
-    #   "none" - allows an orderer to start without a system channel configuration
-    BootstrapMethod: file
-
-    # Bootstrap file: The file containing the bootstrap block to use when
-    # initializing the orderer system channel and BootstrapMethod is set to
-    # "file".  The bootstrap file can be the genesis block, and it can also be
-    # a config block for late bootstrap of some consensus methods like Raft.
-    # Generate a genesis block by updating $FABRIC_CFG_PATH/configtx.yaml and
-    # using configtxgen command with "-outputBlock" option.
-    # Defaults to file "genesisblock" (in $FABRIC_CFG_PATH directory) if not specified.
-    BootstrapFile:
+        # ReplicationPolicy defines how blocks are replicated between orderers.
+        # Permitted values:
+        # in BFT: "simple" | "consensus" (default);
+        # in etcdraft: ignored, (always "simple", regardless of value in config).
+        # When running a Raft orderer or with ReplicationPolicy set to 'simple', an orderer
+        # replicates blocks from a single orderer node.
+        # When running a BFT orderer with ReplicationPolicy set to 'consensus', the orderer
+        # replicates blocks from a single orderer node, but replicates block headers with signatures
+        # from other orderer nodes, and if it suspects the former node withholds blocks from it,
+        # it switches to a new orderer as a source of blocks.
+        ReplicationPolicy:
 
     # LocalMSPDir is where to find the private crypto material needed by the
     # orderer. It is set relative here as a default for dev environments but
@@ -113,9 +133,7 @@ General:
     LocalMSPDir: msp
 
     # LocalMSPID is the identity to register the local MSP material with the MSP
-    # manager. IMPORTANT: The local MSP ID of an orderer needs to match the MSP
-    # ID of one of the organizations defined in the orderer system channel's
-    # /Channel/Orderer configuration. The sample organization defined in the
+    # manager. The sample organization defined in the
     # sample configuration provided has an MSP ID of "SampleOrg".
     LocalMSPID: SampleOrg
 
@@ -164,8 +182,7 @@ General:
     # client messages
     Authentication:
         # the acceptable difference between the current server time and the
-        # client's time as specified in a client request message.
-        # TimeWindow is checked on requests to the delivery service only.
+        # client's time as specified in a client request message
         TimeWindow: 15m
 
 
@@ -180,111 +197,6 @@ FileLedger:
 
     # Location: The directory to store the blocks in.
     Location: /var/hyperledger/production/orderer
-
-################################################################################
-#
-#   SECTION: Kafka
-#
-#   - This section applies to the configuration of the Kafka-based orderer, and
-#     its interaction with the Kafka cluster.
-#
-################################################################################
-Kafka:
-
-    # Retry: What do if a connection to the Kafka cluster cannot be established,
-    # or if a metadata request to the Kafka cluster needs to be repeated.
-    Retry:
-        # When a new channel is created, or when an existing channel is reloaded
-        # (in case of a just-restarted orderer), the orderer interacts with the
-        # Kafka cluster in the following ways:
-        # 1. It creates a Kafka producer (writer) for the Kafka partition that
-        # corresponds to the channel.
-        # 2. It uses that producer to post a no-op CONNECT message to that
-        # partition
-        # 3. It creates a Kafka consumer (reader) for that partition.
-        # If any of these steps fail, they will be re-attempted every
-        # <ShortInterval> for a total of <ShortTotal>, and then every
-        # <LongInterval> for a total of <LongTotal> until they succeed.
-        # Note that the orderer will be unable to write to or read from a
-        # channel until all of the steps above have been completed successfully.
-        ShortInterval: 5s
-        ShortTotal: 10m
-        LongInterval: 5m
-        LongTotal: 12h
-        # Affects the socket timeouts when waiting for an initial connection, a
-        # response, or a transmission. See Config.Net for more info:
-        # https://godoc.org/github.com/Shopify/sarama#Config
-        NetworkTimeouts:
-            DialTimeout: 10s
-            ReadTimeout: 10s
-            WriteTimeout: 10s
-        # Affects the metadata requests when the Kafka cluster is in the middle
-        # of a leader election.See Config.Metadata for more info:
-        # https://godoc.org/github.com/Shopify/sarama#Config
-        Metadata:
-            RetryBackoff: 250ms
-            RetryMax: 3
-        # What to do if posting a message to the Kafka cluster fails. See
-        # Config.Producer for more info:
-        # https://godoc.org/github.com/Shopify/sarama#Config
-        Producer:
-            RetryBackoff: 100ms
-            RetryMax: 3
-        # What to do if reading from the Kafka cluster fails. See
-        # Config.Consumer for more info:
-        # https://godoc.org/github.com/Shopify/sarama#Config
-        Consumer:
-            RetryBackoff: 2s
-    # Settings to use when creating Kafka topics.  Only applies when
-    # Kafka.Version is v0.10.1.0 or higher
-    Topic:
-        # The number of Kafka brokers across which to replicate the topic
-        ReplicationFactor: 3
-    # Verbose: Enable logging for interactions with the Kafka cluster.
-    Verbose: false
-
-    # TLS: TLS settings for the orderer's connection to the Kafka cluster.
-    TLS:
-
-      # Enabled: Use TLS when connecting to the Kafka cluster.
-      Enabled: false
-
-      # PrivateKey: PEM-encoded private key the orderer will use for
-      # authentication.
-      PrivateKey:
-        # As an alternative to specifying the PrivateKey here, uncomment the
-        # following "File" key and specify the file name from which to load the
-        # value of PrivateKey.
-        #File: path/to/PrivateKey
-
-      # Certificate: PEM-encoded signed public key certificate the orderer will
-      # use for authentication.
-      Certificate:
-        # As an alternative to specifying the Certificate here, uncomment the
-        # following "File" key and specify the file name from which to load the
-        # value of Certificate.
-        #File: path/to/Certificate
-
-      # RootCAs: PEM-encoded trusted root certificates used to validate
-      # certificates from the Kafka cluster.
-      RootCAs:
-        # As an alternative to specifying the RootCAs here, uncomment the
-        # following "File" key and specify the file name from which to load the
-        # value of RootCAs.
-        #File: path/to/RootCAs
-
-    # SASLPlain: Settings for using SASL/PLAIN authentication with Kafka brokers
-    SASLPlain:
-      # Enabled: Use SASL/PLAIN to authenticate with Kafka brokers
-      Enabled: false
-      # User: Required when Enabled is set to true
-      User:
-      # Password: Required when Enabled is set to true
-      Password:
-
-    # Kafka protocol version used to communicate with the Kafka cluster brokers
-    # (defaults to 0.10.2.0 if not specified)
-    Version:
 
 ################################################################################
 #
@@ -312,7 +224,7 @@ Debug:
 ################################################################################
 Operations:
     # host and port for the operations server
-    ListenAddress: 0.0.0.0:9443
+    ListenAddress: 127.0.0.1:8443
 
     # TLS configuration for the operations endpoint
     TLS:
@@ -342,7 +254,7 @@ Operations:
 ################################################################################
 Metrics:
     # The metrics provider is one of statsd, prometheus, or disabled
-    Provider: prometheus
+    Provider: disabled
 
     # The statsd configuration
     Statsd:
@@ -402,8 +314,8 @@ Admin:
 #
 ################################################################################
 ChannelParticipation:
-    # Channel participation API is enabled.
-    Enabled: false
+    # Channel participation API is enabled. Deprecated: must be set to true.
+    Enabled: true
 
     # The maximum size of the request body when joining a channel.
     MaxRequestBodySize: 1 MB
