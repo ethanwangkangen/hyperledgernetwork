@@ -33,9 +33,9 @@ for ((i=1; i<=MAX_RETRIES; i++)); do
 done
 
 
-peer channel list
-peer channel getinfo -c mychannel
+#peer channel list
+#peer channel getinfo -c mychannel
 
-peer lifecycle chaincode install mychaincode.tar.gz
+#peer lifecycle chaincode install mychaincode.tar.gz
 
 exit 1

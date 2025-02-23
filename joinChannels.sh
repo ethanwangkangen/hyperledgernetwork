@@ -11,23 +11,33 @@
 cd channeljoinscripts
 
 ./joinPeer0.org1.sh
-sleep 2
+sleep 5
 ./joinPeer1.org1.sh
-sleep 2
-./joinPeer0.org2.sh
-sleep 2
-./joinPeer1.org2.sh
+sleep 5
+./joinPeer2.org1.sh
+sleep 5
+./joinPeer3.org1.sh
+sleep5
 
+
+./installPeer0.org1.sh
+sleep 20
+./installPeer1.org1.sh
+sleep 20
+./installPeer2.org1.sh
+sleep 20
+./installPeer3.org1.sh
 echo "================= All peers have joined the channel successfully ================="
 
+sleep 30
 ./approveOrg1.sh
 #./approveOrg2.sh
 
 
 echo "================= Organisations approved ================="
 
-#sleep 60 # The above seems to take a while to approve chaincodes properly
-#./commitChaincode.sh
+sleep 60 # The above seems to take a while to approve chaincodes properly
+./commitChaincode.sh
 
 echo "================= Chaincode committed ================="
 

@@ -13,8 +13,8 @@ volumes:
   orderer5.example.com:
   peer0.org1.example.com:
   peer1.org1.example.com:
-  peer0.org2.example.com:
-  peer1.org2.example.com:
+  peer2.org1.example.com:
+  peer3.org1.example.com:
 
 services:
 
@@ -46,32 +46,32 @@ services:
 #      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
 #      - ./crypto-config:/hyperledger/caliper/crypto-config
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    hostname: grafana
-    environment:
-      - GF_AUTH_PROXY_ENABLED=true
-      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
-    volumes:
-      - ./provisioning/:/var/lib/grafana/provisioning/
-    ports:
-      - 3000:3000
-    networks:
-      - fabric-network
-    depends_on:
-      - prometheus
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: grafana
+#    hostname: grafana
+#    environment:
+#      - GF_AUTH_PROXY_ENABLED=true
+#      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
+#    volumes:
+#      - ./provisioning/:/var/lib/grafana/provisioning/
+#    ports:
+#      - 3000:3000
+#    networks:
+#      - fabric-network
+#    depends_on:
+#      - prometheus
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
-    ports:
-      - "9090:9090"  # Expose Prometheus web UI on port 9090
-    restart: always
-    networks:
-      - fabric-network
+#  prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus
+#    volumes:
+#      - ./prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
+#    ports:
+#      - "9090:9090"  # Expose Prometheus web UI on port 9090
+#    restart: always
+#    networks:
+#      - fabric-network
 
   orderer.example.com:
     image: hyperledger/fabric-orderer:3.0
@@ -304,7 +304,8 @@ services:
     image: hyperledger/fabric-peer:3.0
     environment:
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
-
+      - FABRIC_LOGGING_SPEC=debug      
+      - CORE_PEER_GENERAL_LOGLEVEL=debug
       - CORE_PEER_TLS_ENABLED=true #trying this....
       - CORE_PEER_PROFILE_ENABLE=false
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
@@ -325,7 +326,7 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
     #  - CORE_PEER_MSPCONFIGPATH="./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org1}
+#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org1}
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9448
       - CORE_METRICS_PROVIDER=prometheus
  #     - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
@@ -365,7 +366,7 @@ services:
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9449
       - CORE_METRICS_PROVIDER=prometheus
  #     - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org1}
+ #     - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org1}
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
       - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
@@ -381,32 +382,32 @@ services:
       - 9449:9449
 
   # Peer Nodes for Org2
-  peer0.org2.example.com:
+  peer2.org1.example.com:
     image: hyperledger/fabric-peer:3.0
     environment:
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_ID=peer0.org2.example.com
-      - CORE_PEER_ADDRESS=peer0.org2.example.com:13051  # Updated
+      - CORE_PEER_ID=peer2.org1.example.com
+      - CORE_PEER_ADDRESS=peer2.org1.example.com:13051  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13051  # Updated
 #      - CORE_PEER_CHAINCODEADDRESS=peer0.org2.example.com:13052  # Updated
 #      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
       - CORE_PEER_ADDRESSAUTODETECT=true
-      - CORE_PEER_EVENTSADDRESS=peer0.org2.example.com:13053  # Updated
+      - CORE_PEER_EVENTSADDRESS=peer2.org1.example.com:13053  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:13051  # Updated
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:13051  # Updated
-      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer2.org1.example.com:13051  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org1.example.com:13051  # Updated
+      - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9450
       - CORE_METRICS_PROVIDER=prometheus
 #      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org2}
+#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org2}
     volumes:
-      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
-      - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp
-      - peer0.org2.example.com:/var/hyperledger/production
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer2.org1.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer2.org1.example.com:/var/hyperledger/production
       - /var/run/docker.sock:/host/var/run/docker.sock
 
     networks:
@@ -417,32 +418,32 @@ services:
       - 9450:9450
     command: peer node start
 
-  peer1.org2.example.com:
+  peer3.org1.example.com:
     image: hyperledger/fabric-peer:3.0
     environment:
       - FABRIC_CFG=/etc/hyperledger/fabric/
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_ID=peer1.org2.example.com
-      - CORE_PEER_ADDRESS=peer1.org2.example.com:13054  # Updated
+      - CORE_PEER_ID=peer3.org1.example.com
+      - CORE_PEER_ADDRESS=peer3.org1.example.com:13054  # Updated
       - CORE_PEER_LISTENADDRESS=0.0.0.0:13054  # Updated
 #      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:13055  # Updated
 #      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
       - CORE_PEER_ADDRESSAUTODETECT=true
-      - CORE_PEER_EVENTSADDRESS=peer1.org2.example.com:13056  # Updated
+      - CORE_PEER_EVENTSADDRESS=peer3.org1.example.com:13056  # Updated
       - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:13054  # Updated
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:13054  # Updated
-      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer3.org1.example.com:13054  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer3.org1.example.com:13054  # Updated
+      - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9451
       - CORE_METRICS_PROVIDER=prometheus
   #    - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org2}
+ #     - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org2}
     volumes:
-      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
-      - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp
-      - peer1.org2.example.com:/var/hyperledger/production
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer3.org1.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer3.org1.example.com:/var/hyperledger/production
       - /var/run/docker.sock:/host/var/run/docker.sock
 
     networks:

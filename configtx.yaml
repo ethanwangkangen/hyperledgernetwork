@@ -58,13 +58,13 @@ Organizations:
         Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
       Writers:
         Type: Signature
-        Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
       Admins:
         Type: Signature
-        Rule: "OR('Org1MSP.admin')"
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.peer')"
       Endorsement:
         Type: Signature
-        Rule: "OR('Org1.admin', 'Org1MSP.peer')"
+        Rule: "OR('Org1MSP.admin', 'Org1MSP.peer')"
   - &Org2
     # DefaultOrg defines the organization which is used in the sampleconfig
     # of the fabric.git development environment
@@ -81,13 +81,13 @@ Organizations:
         Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
       Writers:
         Type: Signature
-        Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
+        Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
       Admins:
         Type: Signature
         Rule: "OR('Org2MSP.admin')"
       Endorsement:
         Type: Signature
-        Rule: "OR('Org2MSP.admin', 'Org2MSP.peer')"
+        Rule: "OR('Org2MSP.peer')"
 ################################################################################
 #
 #   SECTION: Capabilities
@@ -154,8 +154,8 @@ Application: &ApplicationDefaults
   # Policies defines the set of policies at this level of the config tree
   # For Application policies, their canonical path is
   #   /Channel/Application/<PolicyName>
-    - *Org1
-    - *Org2
+   # - *Org1
+   # - *Org2
   Policies:
     Readers:
       Type: ImplicitMeta
@@ -168,17 +168,17 @@ Application: &ApplicationDefaults
      # Rule: "OR('Org1MSP.peer', 'Org1MSP.admin', 'Org2MSP.peer', 'Org2MSP.admin')"
     Admins:
       Type: ImplicitMeta
-      Rule: "ANY Admins"
+      Rule: "MAJORITY Admins"
       #Type: Signature
       #Rule: "OR('Org1MSP.peer', 'Org1MSP.admin', 'Org2MSP.peer', 'Org2MSP.admin')"
     LifecycleEndorsement:
-      Type: ImplicitMeta
-      Rule: "MAJORITY Endorsement"
+      Type: Signature
+      Rule: "OR('Org1MSP.peer', 'Org1MSP.admin')"
      # Type: Signature
      # Rule: "OR('Org1MSP.peer', 'Org1MSP.admin', 'Org2MSP.peer', 'Org2MSP.admin', 'Org1MSP.client', 'Org2MSP.client')"
     Endorsement:
-      Type: ImplicitMeta
-      Rule: "MAJORITY Endorsement"
+      Type: Signature
+      Rule: "OR('Org1MSP.peer', 'Org1MSP.admin')"
      # Type: Signature
      # Rule: "OR('Org1MSP.peer', 'Org1MSP.admin', 'Org2MSP.peer', 'Org2MSP.admin', 'Org1MSP.client', 'Org2MSP.client')"
   Capabilities:
@@ -213,14 +213,14 @@ Orderer: &OrdererDefaults
   #   /Channel/Orderer/<PolicyName>
   Policies:
     Readers:
-      Type: Signature
-      Rule: "OR('OrdererMSP.member')"
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
     Writers:
-      Type: Signature
-      Rule: "OR('OrdererMSP.member')"
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
     Admins:
-      Type: Signature
-      Rule: "OR('OrdererMSP.admin')"
+      Type: ImplicitMeta
+      Rule: "ANY Admins"
     # BlockValidation specifies what signatures must be included in the block
     # from the orderer for the peer to validate it.
     BlockValidation:
@@ -250,7 +250,7 @@ Channel: &ChannelDefaults
     # By default, who may modify elements at this config level
     Admins:
       Type: ImplicitMeta
-      Rule: "MAJORITY Admins"
+      Rule: "ANY Admins"
   # Capabilities describes the channel level capabilities, see the
   # dedicated Capabilities section elsewhere in this file for a full
   # description
@@ -327,5 +327,5 @@ Profiles:
       <<: *ApplicationDefaults
       Organizations:
         - *Org1
-        - *Org2
+#        - *Org2
       Capabilities: *ApplicationCapabilities

@@ -13,8 +13,8 @@ PEER=$2
 declare -A PEER_PORTS
 PEER_PORTS["org1,peer0"]=11051
 PEER_PORTS["org1,peer1"]=11054
-PEER_PORTS["org2,peer0"]=13051
-PEER_PORTS["org2,peer1"]=13054
+PEER_PORTS["org1,peer2"]=13051
+PEER_PORTS["org1,peer3"]=13054
 
 PEER_PORT=${PEER_PORTS["$ORG,$PEER"]}
 if [ -z "$PEER_PORT" ]; then

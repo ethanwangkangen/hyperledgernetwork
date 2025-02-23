@@ -38,21 +38,21 @@ for ((i=1; i<=MAX_RETRIES; i++)); do
 done
 
 
-peer channel list
-peer channel getinfo -c mychannel
+#peer channel list
+#peer channel getinfo -c mychannel
 
 #peer channel fetch config config_block.pb -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com -c mychannel --tls --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
 #configtxlator proto_decode --input config_block.pb --type common.Block --output config_block.json
 #jq .data.data[0].payload.data.config.channel_group.groups.Application config_block.json
 
 # Package the chaincode into mychaincode.tar.gz, will be inside this directory
-peer lifecycle chaincode package mychaincode.tar.gz \
-	--path ../chaincode/build/libs \
-	--lang java \
-	--label mychaincode
+#peer lifecycle chaincode package mychaincode.tar.gz \
+#	--path ../chaincode/build/libs \
+#	--lang java \
+#	--label mychaincode
 
 # Install the chaincode on this peer
-peer lifecycle chaincode install mychaincode.tar.gz
+#peer lifecycle chaincode install mychaincode.tar.gz
 
 # Instantiate the chaincode (ie. install it on the channel) # Update: this seems to be depracated
 # peer chaincode instantiate -o localhost:7049 --channelID mychannel --ordererTLSHostnameOverride orderer.example.com --name mychaincode --version 1.0 --init-required -c '{"Args":["init","a","100","b","200"]}' --ctor '{"Args":["init","a","100","b","200"]}' --tls --cafile --cafile "./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
