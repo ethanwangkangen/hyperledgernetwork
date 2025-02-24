@@ -14,7 +14,7 @@ test:
         type: maximum-rate
         opts:
           tps: 10
-          step: 10
+          step: 5
           #transactionLoad: 5
       workload:
         module: workload/invoke.js
@@ -30,7 +30,7 @@ test:
         type: maximum-rate
         opts:
           tps: 10
-          step: 10
+          step: 5
           #transactionLoad: 5
       workload:
         module: workload/query.js

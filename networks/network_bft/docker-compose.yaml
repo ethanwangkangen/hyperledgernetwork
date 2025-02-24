@@ -18,6 +18,7 @@ volumes:
 
 services:
 
+#  Not using CA so can ignore this 
 #  ca.org1.example.com:
 #    container_name: ca.org1.example.com
 #    image: hyperledger/fabric-ca:latest

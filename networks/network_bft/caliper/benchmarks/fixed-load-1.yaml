@@ -13,7 +13,7 @@ test:
       rateControl:
         type: fixed-load
         opts:
-          startTps: 2
+          startTps: 50
           transactionLoad: 5
       workload:
         module: workload/invoke.js
@@ -28,7 +28,7 @@ test:
       rateControl:
         type: fixed-load
         opts:
-          startTps: 2
+          startTps: 50
           transactionLoad: 5
       workload:
         module: workload/query.js
