@@ -1,0 +1,428 @@
+version: '3.7'
+
+networks:
+  fabric-network:
+    name: fabric-network
+    driver: bridge
+
+volumes:
+  orderer.example.com:
+  orderer2.example.com:
+  orderer3.example.com:
+  orderer4.example.com:
+  orderer5.example.com:
+  peer0.org1.example.com:
+  peer1.org1.example.com:
+  peer0.org2.example.com:
+  peer1.org2.example.com:
+
+services:
+
+#  ca.org1.example.com:
+#    container_name: ca.org1.example.com
+#    image: hyperledger/fabric-ca:latest
+#    environment:
+#      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+#      - FABRIC_CA_SERVER_PORT=7054
+#      - FABRIC_CA_SERVER_TLS_ENABLED=true
+#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
+#      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
+#    volumes:
+#      - ./crypto-config/peerOrganizations/org1.example.com/ca:/etc/hyperledger/fabric-ca-server-config
+#    ports:
+#      - "11111:11111"
+#    command: sh -c 'fabric-ca-server start -b admin:adminpw'
+#  caliper:
+#    container_name: caliper
+#    image: hyperledger/caliper:0.6.0
+#    command: launch manager
+#    environment:
+#      - CALIPER_BIND_SUT=fabric:fabric-gateway
+#      - CALIPER_BENCHCONFIG=benchmarks/config.yaml
+#      - CALIPER_NETWORKCONFIG=networks/network-config.yaml
+#      - npm_config_strict_ssl=false # This is not secure.
+#    volumes:
+#      - ./caliper:/hyperledger/caliper/workspace
+#      - ./certbundle:/usr/local/share/ca-certificates/certbundle.crt
+#      - ./crypto-config:/hyperledger/caliper/crypto-config
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_AUTH_PROXY_ENABLED=true
+      - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning/
+    volumes:
+      - ./provisioning/:/var/lib/grafana/provisioning/
+    ports:
+      - 3000:3000
+    networks:
+      - fabric-network
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus-docker/prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the config file
+    ports:
+      - "9090:9090"  # Expose Prometheus web UI on port 9090
+    restart: always
+    networks:
+      - fabric-network
+
+  orderer.example.com:
+    image: hyperledger/fabric-orderer:2.5
+    environment:
+
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7049 # use this port when joining peer to channel. inside joinchannel.sh
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_BOOTSTRAP=orderer2.example.com:7054,orderer3.example.com:7059,orderer4.example.com:7064,orderer5.example.com:7069
+      - ORDERER_GENERAL_CLUSTER_LOGLEVEL=debug
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7048
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9443 #should this be orderer.example.com:9443?
+      - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+    # Mapping from host (local machine) to the container. ie first directory is where the actual msp files are located, the latter is where its found in container
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls:/var/hyperledger/orderer/tls
+      # Mapping the CA root certificate to the orderer's MSP
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem:/var/hyperledger/orderer/msp/cacerts/ca.org1.example.com-cert.pem
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/ca.org2.example.com-cert.pem:/var/hyperledger/orderer/msp/cacerts/ca.org2.example.com-cert.pem
+
+      - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
+      - orderer.example.com:/var/hyperledger/production/orderer
+
+      - ./orderer.yaml:/etc/hyperledger/fabric/orderer.yaml
+
+    networks:
+      - fabric-network
+    ports:
+      - 7049:7049
+      - 7050:7050
+      - 7051:7051
+      - 9443:9443
+
+    # Things to note: make sure no clashing of ports.
+
+  orderer2.example.com:
+    image: hyperledger/fabric-orderer:2.5
+    environment:
+    - ORDERER_GENERAL_LOGLEVEL=info
+    - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+    - ORDERER_GENERAL_LISTENPORT=7054
+    - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+    - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer2/msp
+    - ORDERER_GENERAL_TLS_ENABLED=true
+    - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer2/tls/server.key
+    - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer2/tls/server.crt
+    - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer2/tls/ca.crt]
+    - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer2/tls/server.crt
+    - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer2/tls/server.key
+    - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer2/tls/ca.crt]
+    - ORDERER_GENERAL_CLUSTER_BOOTSTRAP=orderer.example.com:7049,orderer3.example.com:7059,orderer4.example.com:7064,orderer5.example.com:7069
+    - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/production/orderer/genesis.block
+    - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/production/orderer/genesis.block
+    - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+    - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+    - ORDERER_ADMIN_TLS_ENABLED=true
+    - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer2/tls/server.crt
+    - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer2/tls/server.key
+    - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer2/tls/ca.crt]
+    - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer2/tls/ca.crt]
+    - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7053
+    - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9444
+    - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer2/msp
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/tls:/var/hyperledger/orderer2/tls
+      - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
+      - orderer2.example.com:/var/hyperledger/production/orderer
+    networks:
+      - fabric-network
+    ports:
+      - 7054:7054
+      - 7055:7055
+      - 7056:7056
+      - 9444:9444
+
+  orderer3.example.com:
+    image: hyperledger/fabric-orderer:2.5
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7059
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer3/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer3/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer3/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer3/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer3/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer3/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer3/tls/ca.crt]
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_CLUSTER_BOOTSTRAP=orderer.example.com:7049,orderer2.example.com:7054,orderer4.example.com:7064,orderer5.example.com:7069
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer3/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer3/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer3/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer3/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7058
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9445
+      - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp:/var/hyperledger/orderer3/msp
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls:/var/hyperledger/orderer3/tls
+      - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
+      - orderer3.example.com:/var/hyperledger/production/orderer
+    networks:
+      - fabric-network
+    ports:
+      - 7059:7059
+      - 7060:7060
+      - 7061:7061
+      - 9445:9445
+
+  orderer4.example.com:
+    image: hyperledger/fabric-orderer:2.5
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7064
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer4/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer4/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer4/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer4/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer4/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer4/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer4/tls/ca.crt]
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_CLUSTER_BOOTSTRAP=orderer.example.com:7049,orderer3.example.com:7059,orderer2.example.com:7054,orderer5.example.com:7069
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer4/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer4/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer4/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer4/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7063
+      - ORDERER_OPERATIONS_LISTENADDRESS=orderer4.example.com:9446
+      - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp:/var/hyperledger/orderer4/msp
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/tls:/var/hyperledger/orderer4/tls
+      - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
+      - orderer4.example.com:/var/hyperledger/production/orderer
+    networks:
+      - fabric-network
+    ports:
+      - 7064:7064
+      - 7065:7065
+      - 7066:7066
+      - 9446:9446
+
+  orderer5.example.com:
+    image: hyperledger/fabric-orderer:2.5
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7069
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer5/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer5/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer5/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer5/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer5/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer5/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer5/tls/ca.crt]
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/production/orderer/genesis.block
+      - ORDERER_GENERAL_CLUSTER_BOOTSTRAP=orderer.example.com:7049,orderer3.example.com:7059,orderer4.example.com:7064,orderer2.example.com:7054
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer5/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer5/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer5/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer5/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7068
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:9447
+      - ORDERER_METRICS_PROVIDER=prometheus
+    volumes:
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp:/var/hyperledger/orderer5/msp
+      - ./crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/tls:/var/hyperledger/orderer5/tls
+      - ./channel-artifacts/genesis.block:/var/hyperledger/production/orderer/genesis.block
+      - orderer5.example.com:/var/hyperledger/production/orderer
+
+    networks:
+      - fabric-network
+    ports:
+      - 7069:7069
+      - 7070:7070
+      - 7071:7071
+      - 9447:9447
+
+  # Peer Nodes for Org1
+  peer0.org1.example.com:
+    image: hyperledger/fabric-peer:2.5
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true #trying this....
+      - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:11051  # Updated port for Peer0
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:11052  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_PEER_EVENTSADDRESS=peer0.org1.example.com:11053  # Updated
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:11051  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:11051  # Updated
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    #  - CORE_PEER_MSPCONFIGPATH="./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9448
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
+    volumes:
+      #- ./peer0.org1.example.com:/etc/hyperledger
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer0.org1.example.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+
+    working_dir: /root
+    networks:
+      - fabric-network
+    ports:
+      - "11051:11051"  # Updated host port
+      - 9448:9448
+
+  peer1.org1.example.com:
+    image: hyperledger/fabric-peer:2.5
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_ID=peer1.org1.example.com
+      - CORE_PEER_ADDRESS=peer1.org1.example.com:11054  # Updated port for Peer0
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11054  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer1.org1.example.com:11055  # Updated
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_PEER_EVENTSADDRESS=peer1.org1.example.com:11056  # Updated
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.example.com:11054  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:11054  # Updated
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9449
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer1.org1.example.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+
+    networks:
+      - fabric-network
+    ports:
+      - "11054:11054"  # Updated host port
+      - 9449:9449
+
+  # Peer Nodes for Org2
+  peer0.org2.example.com:
+    image: hyperledger/fabric-peer:2.5
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_ID=peer0.org2.example.com
+      - CORE_PEER_ADDRESS=peer0.org2.example.com:13051  # Updated
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:13051  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer0.org2.example.com:13052  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_PEER_EVENTSADDRESS=peer0.org2.example.com:13053  # Updated
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:13051  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:13051  # Updated
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9450
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer0.org2.example.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+
+    networks:
+      - fabric-network
+    ports:
+      - "13051:13051"  # Updated host port
+      - 9450:9450
+
+  peer1.org2.example.com:
+    image: hyperledger/fabric-peer:2.5
+    environment:
+      - FABRIC_CFG=/etc/hyperledger/fabric/
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_ID=peer1.org2.example.com
+      - CORE_PEER_ADDRESS=peer1.org2.example.com:13054  # Updated
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:13054  # Updated
+#      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:13055  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_PEER_EVENTSADDRESS=peer1.org2.example.com:13056  # Updated
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:13054  # Updated
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:13054  # Updated
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9451
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_PEER_GOSSIP_PVTDATA_RECONCILIATIONENABLED=false
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
+      - ./crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp:/etc/hyperledger/fabric/msp
+      - peer1.org2.example.com:/var/hyperledger/production
+      - /var/run/docker.sock:/host/var/run/docker.sock
+
+    networks:
+      - fabric-network
+    ports:
+      - "13054:13054"  # Updated host port
+      - 9451
+

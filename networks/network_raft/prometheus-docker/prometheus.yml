@@ -1,0 +1,45 @@
+global:
+  scrape_interval: 1s  # Scrape every 15 seconds
+
+scrape_configs:
+  - job_name: 'fabric-orderer-1'
+    static_configs:
+      - targets: ['orderer.example.com:9443']
+
+  - job_name: 'fabric-orderer-2'
+    static_configs:
+      - targets: ['orderer2.example.com:9444']
+
+  - job_name: 'fabric-orderer-3'
+    static_configs:
+      - targets: ['orderer3.example.com:9445']
+
+  - job_name: 'fabric-orderer-4'
+    static_configs:
+      - targets: ['orderer4.example.com:9446']
+
+  - job_name: 'fabric-orderer-5'
+    static_configs:
+      - targets: ['orderer5.example.com:9447']
+
+  - job_name: 'fabric-peer0-org1'
+    static_configs:
+      - targets: ['peer0.org1.example.com:9448']
+
+  - job_name: 'fabric-peer1-org1'
+    static_configs:
+      - targets: ['peer1.org1.example.com:9449']
+
+  - job_name: 'fabric-peer0-org2'
+    static_configs:
+      - targets: ['peer0.org2.example.com:9450']
+
+  - job_name: 'fabric-peer1-org2'
+    static_configs:
+      - targets: ['peer1.org2.example.com:9451']
+
+
+#  - job_name: 'fabric-peer'
+#    static_configs:
+#      - targets: ['host.docker.internal:9443']  # Similarly, add any other targets for peers or additional services
+
