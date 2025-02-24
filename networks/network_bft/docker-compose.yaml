@@ -304,7 +304,7 @@ services:
     image: hyperledger/fabric-peer:3.0
     environment:
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
-      - FABRIC_LOGGING_SPEC=debug      
+      - FABRIC_LOGGING_SPEC=info
       - CORE_PEER_GENERAL_LOGLEVEL=debug
       - CORE_PEER_TLS_ENABLED=true #trying this....
       - CORE_PEER_PROFILE_ENABLE=false
@@ -315,8 +315,11 @@ services:
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:11051  # Updated port for Peer0
       - CORE_PEER_LISTENADDRESS=0.0.0.0:11051  # Updated
-      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:11052  # Updated
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_EVENTSADDRESS=peer0.org1.example.com:11052
+#      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:11052  # Updated
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
 
 #      - CORE_PEER_EVENTSADDRESS=peer0.org1.example.com:11053  # Updated
 #      - CORE_PEER_PROFILE_ENABLED=true

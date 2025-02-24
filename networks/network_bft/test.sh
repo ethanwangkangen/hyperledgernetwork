@@ -1,5 +1,5 @@
 
-source ./setPeerEnv.sh org1 peer1
+source ./setPeerEnv.sh org1 peer5
 peer lifecycle chaincode queryapproved -n mychaincode
 peer chaincode invoke -o localhost:7049 --ordererTLSHostnameOverride orderer.example.com \
 	--tls --cafile "${PWD}/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
