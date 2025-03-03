@@ -77,7 +77,7 @@ services:
   orderer.example.com:
     image: hyperledger/fabric-orderer:3.0
     environment:
-
+      - FABRIC_LOGGING_SPEC=debug
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7049 # use this port when joining peer to channel. inside joinchannel.sh
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
@@ -130,7 +130,8 @@ services:
   orderer2.example.com:
     image: hyperledger/fabric-orderer:3.0
     environment:
-    - ORDERER_GENERAL_LOGLEVEL=info
+    - FABRIC_LOGGING_SPEC=debug
+    - ORDERER_GENERAL_LOGLEVEL=DEBUG
     - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
     - ORDERER_GENERAL_LISTENPORT=7054
     - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
@@ -173,6 +174,7 @@ services:
   orderer3.example.com:
     image: hyperledger/fabric-orderer:3.0
     environment:
+      - FABRIC_LOGGING_SPEC=info:orderer.consensus.smartbft.consensus=debug
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7059
@@ -216,6 +218,7 @@ services:
   orderer4.example.com:
     image: hyperledger/fabric-orderer:3.0
     environment:
+      - FABRIC_LOGGING_SPEC=info:orderer.consensus.smartbft.consensus=debug
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7064
@@ -259,6 +262,7 @@ services:
   orderer5.example.com:
     image: hyperledger/fabric-orderer:3.0
     environment:
+      - FABRIC_LOGGING_SPEC=info:orderer.consensus.smartbft.consensus=debug
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_LISTENPORT=7069

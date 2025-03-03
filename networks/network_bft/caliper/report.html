@@ -153,10 +153,10 @@
                     </tr>
 
                     <tr>
-                         <td>Invoke Transactions</td> <td>400</td> <td>0</td> <td>55.8</td> <td>0.37</td> <td>0.05</td> <td>0.14</td> <td>55.1</td>
+                         <td>Invoke Transactions</td> <td>1</td> <td>0</td> <td>Infinity</td> <td>0.10</td> <td>0.10</td> <td>0.10</td> <td>9.7</td>
                     </tr>
                     <tr>
-                         <td>Query Transactions</td> <td>400</td> <td>0</td> <td>74.3</td> <td>0.27</td> <td>0.05</td> <td>0.12</td> <td>73.0</td>
+                         <td>Query Transactions</td> <td>1</td> <td>0</td> <td>Infinity</td> <td>0.13</td> <td>0.13</td> <td>0.13</td> <td>7.9</td>
                     </tr>
                 </table>
             </div>
@@ -164,10 +164,9 @@
                 <h2>Benchmark round: Invoke Transactions</h2>
                 <p>Invoke transactions at a fixed rate</p>
                 <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
-  type: fixed-load
+  type: fixed-rate
   opts:
-    startTps: 50
-    transactionLoad: 5
+    tps: 1
 </pre>
                         <h3>Performance metrics for Invoke Transactions</h3>
                             <table style="min-width: 100%;">
@@ -175,7 +174,7 @@
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Invoke Transactions</td> <td>400</td> <td>0</td> <td>55.8</td> <td>0.37</td> <td>0.05</td> <td>0.14</td> <td>55.1</td>
+                                     <td>Invoke Transactions</td> <td>1</td> <td>0</td> <td>Infinity</td> <td>0.10</td> <td>0.10</td> <td>0.10</td> <td>9.7</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Invoke Transactions</h3>
@@ -185,10 +184,9 @@
                 <h2>Benchmark round: Query Transactions</h2>
                 <p>Query transactions at a fixed rate</p>
                 <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
-  type: fixed-load
+  type: fixed-rate
   opts:
-    startTps: 50
-    transactionLoad: 5
+    tps: 1
 </pre>
                         <h3>Performance metrics for Query Transactions</h3>
                             <table style="min-width: 100%;">
@@ -196,7 +194,7 @@
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Query Transactions</td> <td>400</td> <td>0</td> <td>74.3</td> <td>0.27</td> <td>0.05</td> <td>0.12</td> <td>73.0</td>
+                                     <td>Query Transactions</td> <td>1</td> <td>0</td> <td>Infinity</td> <td>0.13</td> <td>0.13</td> <td>0.13</td> <td>7.9</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Query Transactions</h3>
@@ -211,16 +209,15 @@ network:
   name: fabric-network
 workers:
   type: local
-  number: 10
+  number: 1
 rounds:
   - label: Invoke Transactions
     description: Invoke transactions at a fixed rate
-    txNumber: 400
+    txNumber: 1
     rateControl:
-      type: fixed-load
+      type: fixed-rate
       opts:
-        startTps: 50
-        transactionLoad: 5
+        tps: 1
     workload:
       module: workload&#x2F;invoke.js
       arguments:
@@ -232,12 +229,11 @@ rounds:
           - arg2
   - label: Query Transactions
     description: Query transactions at a fixed rate
-    txNumber: 400
+    txNumber: 1
     rateControl:
-      type: fixed-load
+      type: fixed-rate
       opts:
-        startTps: 50
-        transactionLoad: 5
+        tps: 1
     workload:
       module: workload&#x2F;query.js
       arguments:

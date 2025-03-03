@@ -5,7 +5,8 @@ test:
     name: fabric-network
   workers:
     type: local
-    number: 10
+    number: 5
+
   rounds:
     - label: "Invoke Transactions"
       description: "Invoke transactions at a fixed rate"
