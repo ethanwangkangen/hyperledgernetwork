@@ -9,7 +9,7 @@ test:
   rounds:
     - label: "Invoke Transactions"
       description: "Invoke transactions at a fixed rate"
-      txNumber: 100
+      txNumber: 20
       rateControl:
         type: fixed-rate
         opts:
@@ -24,7 +24,7 @@ test:
           contractArguments: ["arg1", "arg2"]
     - label: "Query Transactions"
       description: "Query transactions at a fixed rate"
-      txNumber: 100
+      txNumber: 20
       rateControl:
         type: fixed-rate
         opts:
