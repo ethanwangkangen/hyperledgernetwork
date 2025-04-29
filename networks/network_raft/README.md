@@ -1,40 +1,80 @@
-# Network consisting of 5 orderers, 4 peers (2 in each organisation), running Raft consensus mechanism.
+# Hyperledger Fabric Network Guide
 
-----------------------------------------------------------
-# [MUST DO]
-# To start the network:
-./network.sh x
+This network consists of:
+- **5 Orderers**
+- **4 Peers** (2 in each organisation)
+- **Raft consensus mechanism**
 
-# This brings down any existing network/docker containers/images, 
-# brings up new docker images, pulling HLF images from online repo (thus needs internet access), 
+---
 
-----------------------------------------------------------
-# [MUST DO]
-# Then to join everything to channel,
-./joinChannels.sh
+## Starting the Network
 
-# This connects creates the channel, joins peers to channel, installs chaincode on all peers, approves chaincode for Org1 and Org2.
-# Finally, commits chaincode.
-# Scripts for all the above are in ./channeljoinscripts
-# Now chaincode should be ready to be invoked.
+### 1. Start the Network
 
-----------------------------------------------------------
-# To change the peer environment (which peer you are acting as),
-source ./setPeerEnv org<x> peer<x>
-eg: source ./setPeerEnv org1 peer0
+    ./network.sh x
 
-# Then can run commands like
-peer lifecycle queryinstalled
+- Shuts down any existing network and Docker containers.
+- Pulls required Hyperledger Fabric (HLF) images (requires internet access).
+- Brings up a new network using Docker Compose.
 
-----------------------------------------------------------
-# To test whether chaincode invokation works, 
-./test.sh
+---
 
-----------------------------------------------------------
-# To run caliper benchmarks,
-cd caliper
-./run.sh
+### 2. Join Channel and Deploy Chaincode
 
-# Benchmark configurations are in the /benchmark directory.
-# Can modify type of loading used, number of workers.
-# To change which configuration is used, modify run.sh
+    ./joinChannels.sh
+
+This script:
+- Creates the channel.
+- Joins all peers to the channel.
+- Installs chaincode on all peers.
+- Approves chaincode for both Org1 and Org2.
+- Commits the chaincode.
+
+Scripts for the above steps are located in `./channeljoinscripts`.
+
+Now the chaincode should be ready to be invoked.
+
+---
+
+## Peer Environment Configuration
+
+To act as a specific peer, set the peer environment variables:
+
+    source ./setPeerEnv org<orgNumber> peer<peerNumber>
+
+Example:
+
+    source ./setPeerEnv org1 peer0
+
+After setting the environment, you can run CLI commands like:
+
+    peer lifecycle chaincode queryinstalled
+
+---
+
+## Test Chaincode Invocation
+
+Run the test script to verify that chaincode invocation works:
+
+    ./test.sh
+
+---
+
+## Run Caliper Benchmarks
+
+### 1. Change to the Caliper Directory
+
+    cd caliper
+
+### 2. Run the Benchmark
+
+    ./run.sh
+
+### 3. Modify Benchmark Configuration
+
+- Benchmark configurations are stored in the `/benchmark` directory.
+- You can change:
+  - The type of load applied
+  - The number of workers used
+
+To change the active configuration, edit `run.sh`.
