@@ -22,11 +22,19 @@ git clone git@github.com:ethanwangkangen/hyperledgernetwork.git
 ```
 Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
 
-Docker installation:
+## Prerequisites (Assumed Linux environment)
+Curl
 
 ```bash
 sudo apt-get update
-sudo apt-get install docker-ce
+sudo apt-get -y install docker-compose
+```
+
+Docker:
+
+```bash
+sudo apt-get update
+sudo apt-get -y install docker-compose
 ```
 
 May have to add user to Docker group.
