@@ -14,14 +14,36 @@ This repository contains code to set up a Hyperledger Fabric (HLF) network withi
 
 ---
 
-## Setup Instructions
+## Installation and Setup
+
+Clone the repository with
+```bash
+git clone git@github.com:ethanwangkangen/hyperledgernetwork.git
+```
+Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
+
+Docker installation:
+
+```bash
+sudo apt-get update
+sudo apt-get install docker-ce
+```
+
+May have to add user to Docker group.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+
+## Network Setup Instructions
 
 ### 1. Navigate to the Desired Network Folder
 
 For example, to use the RAFT network with 5 orderers:
 
 ```bash
-cd networks/raft/network_raft_5
+cd hyperledgernetwork/networks/raft/network_raft_5
 ```
 
 ---
