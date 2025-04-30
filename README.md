@@ -18,7 +18,7 @@ This repository contains code to set up a Hyperledger Fabric (HLF) network withi
 
 Clone the repository with
 ```bash
-git clone git@github.com:ethanwangkangen/hyperledgernetwork.git
+git clone https://github.com/ethanwangkangen/hyperledgernetwork.git
 ```
 Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
 
