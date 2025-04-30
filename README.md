@@ -23,8 +23,10 @@ git clone https://github.com/ethanwangkangen/hyperledgernetwork.git
 Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
 
 ## Prerequisites (Assumed Linux environment)
-Curl, Docker, git, 
-For chaincode packaging: Java, Gradle
+Curl, Docker, git  
+
+For chaincode packaging: Java, Gradle  
+
 For caliper: nodejs, npm
 ```bash
 sudo apt-get update
