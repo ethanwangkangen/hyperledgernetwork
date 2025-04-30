@@ -23,11 +23,12 @@ git clone https://github.com/ethanwangkangen/hyperledgernetwork.git
 Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
 
 ## Prerequisites (Assumed Linux environment)
-Curl, Docker, git
-
+Curl, Docker, git, 
+For chaincode packaging: Java, Gradle
+For caliper: nodejs, npm
 ```bash
 sudo apt-get update
-sudo apt-get install git curl docker-compose -y
+sudo apt-get install git curl docker-compose -y openjdk-11-jdk gradle nodejs npm
 ```
 
 May have to add user to Docker group.
@@ -41,7 +42,8 @@ Make sure the Docker daemon is running.
 sudo systemctl start docker
 ```
 
-Give the Docker socket the correct permissions
+Give the Docker socket the correct permissions 
+(bad practice to give full permissions this way but it works)
 ```bash
 sudo chmod 777 /var/run/docker.sock
 ```
