@@ -23,18 +23,11 @@ git clone https://github.com/ethanwangkangen/hyperledgernetwork.git
 Or simply extract the folder with [(https://github.com/ethanwangkangen/hyperledgernetwork/archive/refs/heads/main.zip)]
 
 ## Prerequisites (Assumed Linux environment)
-Curl
+Curl, Docker, git
 
 ```bash
 sudo apt-get update
-sudo apt-get -y install docker-compose
-```
-
-Docker:
-
-```bash
-sudo apt-get update
-sudo apt-get -y install docker-compose
+sudo apt-get install git curl docker-compose -y
 ```
 
 May have to add user to Docker group.
@@ -43,6 +36,10 @@ May have to add user to Docker group.
 sudo usermod -aG docker $USER
 ```
 
+Make sure the Docker daemon is running.
+```bash
+sudo systemctl start docker
+```
 
 ## Network Setup Instructions
 
