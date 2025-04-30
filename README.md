@@ -41,6 +41,10 @@ Make sure the Docker daemon is running.
 sudo systemctl start docker
 ```
 
+Give the Docker socket the correct permissions
+```bash
+sudo chmod 777 /var/run/docker.sock
+```
 ## Network Setup Instructions
 
 ### 1. Navigate to the Desired Network Folder
